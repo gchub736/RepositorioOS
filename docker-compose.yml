@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:15
+    container_name: os_db
+    restart: always
+    environment:
+      POSTGRES_DB: os_manager_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: rA9
+    ports:
+      - "5432:5432"
+
+  api:
+    build:
+      context: ./os-manager-api
+    container_name: os_api
+    ports:
+      - "8000:8000"
+    #volumes:
+      #- ./os-manager-api:/var/www
+    depends_on:
+      - db
+
+  front:
+    build:
+      context: ./os-manager-front
+    container_name: os_front
+    ports:
+      - "3000:3000"
+    #volumes:
+     # - ./os-manager-front:/app
+     # - /app/node_modules
+    depends_on:
+      - api
