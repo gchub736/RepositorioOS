@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('prioridade');
             $table->string('localizacao')->nullable();
             $table->text('solucao')->nullable();
-            // Relacionamento com a tabela de usuários [cite: 2026-02-11]
             $table->unsignedBigInteger('usuario_id');
             $table->foreign('usuario_id')->references('id')->on('usuarios')->onDelete('cascade');
             $table->timestamps();

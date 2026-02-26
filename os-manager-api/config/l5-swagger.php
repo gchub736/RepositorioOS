@@ -10,7 +10,7 @@ return [
             ],
 
             'routes' => [
-                'api' => 'api/documentation', // rota do Swagger UI
+                'api' => 'api/documentation', 
             ],
 
             'paths' => [
@@ -49,8 +49,8 @@ return [
 
         'scanOptions' => [
             'exclude' => [
-                base_path('app/Models'), // não precisa escanear models
-                base_path('app/Http/Controllers/Controller.php'), // controller abstrato
+                base_path('app/Models'), 
+                base_path('app/Http/Controllers/Controller.php'),
             ],
             'open_api_spec_version' => env('L5_SWAGGER_OPEN_API_SPEC_VERSION', \L5Swagger\Generator::OPEN_API_DEFAULT_SPEC_VERSION),
         ],
@@ -60,7 +60,6 @@ return [
             'security' => [],
         ],
 
-        // ⚠️ ativa geração automática em dev
         'generate_always' => env('L5_SWAGGER_GENERATE_ALWAYS', true),
         'generate_yaml_copy' => false,
         'proxy' => false,

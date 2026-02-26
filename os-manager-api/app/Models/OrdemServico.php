@@ -24,7 +24,6 @@ class OrdemServico extends Model
 
     public function usuario()
     {
-        // Vincula ao modelo unificado User [cite: 2026-02-11]
         return $this->belongsTo(User::class, 'usuario_id');
     }
 }

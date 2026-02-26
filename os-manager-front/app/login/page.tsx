@@ -32,7 +32,6 @@ export default function Login() {
   return (
     <div className="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md border border-gray-200">
       <div className="mb-8 text-center">
-        {/* Título alterado conforme pedido */}
         <h1 className="text-2xl font-black text-slate-800 uppercase tracking-tighter">
           {isCadastro ? 'Novo Técnico' : 'Central de Suporte Técnico'}
         </h1>

@@ -6,21 +6,21 @@ export default function Estatisticas() {
   const [dados, setDados] = useState([]);
 
   useEffect(() => {
-    // Busca as ordens com o relacionamento de usuário já incluído pelo Laravel
+  
     api.get('/ordens').then(res => setDados(res.data)).catch(console.error);
   }, []);
 
-  // Processamento de dados
+  
   const total = dados.length;
   const resolvidos = dados.filter((os: any) => os.status === 'Fechado').length;
   const abertos = total - resolvidos;
   const percResolvidos = total > 0 ? (resolvidos / total) * 100 : 0;
 
-  // Lógica corrigida para mapear Técnicos via Objeto de Usuário [cite: 2026-02-11]
+ 
   const techMap: any = {};
   
   dados.filter((os: any) => os.status === 'Fechado').forEach((os: any) => {
-    // Se o chamado tiver um usuário vinculado, usa o nome dele, senão usa 'Sem Técnico' [cite: 2026-02-11]
+   
     const nomeTecnico = os.usuario?.nome || 'Sem Técnico';
     const idTecnico = os.usuario_id || 'N/A';
 

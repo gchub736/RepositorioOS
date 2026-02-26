@@ -22,3 +22,5 @@ php artisan migrate --force
 
 # Sobe o servidor
 php artisan serve --host=0.0.0.0 --port=8000
+
+# resolveu o problema de conexão com o banco

@@ -33,12 +33,12 @@ export default function ListaChamados() {
     os.id.toString().includes(busca)
   );
 
-  // --- NOVA FUNÇÃO DE EXCLUSÃO ---
+ 
   const deletarChamado = async (id: number) => {
     if (confirm("Deseja excluir este chamado permanentemente?")) {
       try {
         await api.delete(`/ordens/${id}`);
-        buscarDados(); // Atualiza a lista após excluir [cite: 2026-02-11]
+        buscarDados(); 
       } catch (err) {
         alert("Erro ao excluir chamado.");
       }

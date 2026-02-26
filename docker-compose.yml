@@ -22,7 +22,7 @@ services:
       - ./os-manager-api:/var/www
     depends_on:
       - db
-    command: ["./entrypoint.sh"] # garante que rodamos nosso entrypoint
+    command: ["./entrypoint.sh"] 
 
   front:
     build:

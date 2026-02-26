@@ -8,7 +8,7 @@ export default function NovoChamado() {
   const [descricao, setDescricao] = useState('');
   const [urgencia, setUrgencia] = useState('Média');
   const [prioridade, setPrioridade] = useState('Média');
-  const [usuarioId, setUsuarioId] = useState(''); // Mantemos o estado internamente
+  const [usuarioId, setUsuarioId] = useState(''); 
   const router = useRouter();
 
   // Carrega o primeiro técnico disponível automaticamente para preencher o ID
@@ -25,7 +25,7 @@ export default function NovoChamado() {
   const salvarOrdem = async (e: any) => {
     e.preventDefault();
     
-    // Se não houver usuários no banco, usamos um ID padrão (1) para não quebrar o banco
+   
     const idFinal = usuarioId || 1;
 
     try {
@@ -34,7 +34,7 @@ export default function NovoChamado() {
         descricao,
         urgencia,
         prioridade,
-        usuario_id: idFinal, // Enviado automaticamente
+        usuario_id: idFinal,
         status: 'Novo',
       });
       router.push('/');
@@ -50,7 +50,7 @@ export default function NovoChamado() {
       <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
         <form onSubmit={salvarOrdem} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* O CAMPO DE TÉCNICO FOI REMOVIDO DAQUI */}
+        
             
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Urgência</label>

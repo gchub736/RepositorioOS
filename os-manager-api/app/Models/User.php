@@ -25,7 +25,6 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    // Avisa ao Laravel que a coluna de senha se chama 'senha'
     public function getAuthPassword()
     {
         return $this->senha;

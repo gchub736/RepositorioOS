@@ -8,7 +8,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const pathname = usePathname();
   const [usuarioLogado, setUsuarioLogado] = useState<any>(null);
 
-  // Busca os dados do usuário salvos no navegador (localStorage) ao carregar
+  
   useEffect(() => {
     const savedUser = localStorage.getItem('usuario');
     if (savedUser) {
@@ -58,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               ))}
             </nav>
 
-            {/* NOVA SEÇÃO: Identificação do Usuário Logado */}
+      
             {usuarioLogado && (
               <div className="p-4 bg-slate-800/50 border-t border-slate-700">
                 <p className="text-[9px] text-slate-500 uppercase font-bold mb-1">Logado como:</p>
