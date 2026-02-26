@@ -7,12 +7,56 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * @OA\Tag(
+ *     name="Usuarios",
+ *     description="Endpoints para gerenciar usuários"
+ * )
+ */
 class UsuarioController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/usuarios",
+     *     tags={"Usuarios"},
+     *     summary="Lista todos os usuários",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de usuários",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/User"))
+     *     )
+     * )
+     */
+    public function index()
+    {
+        return response()->json(User::all());
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/usuarios",
+     *     tags={"Usuarios"},
+     *     summary="Cria um novo usuário",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"nome","cpf","senha"},
+     *             @OA\Property(property="nome", type="string"),
+     *             @OA\Property(property="cpf", type="string"),
+     *             @OA\Property(property="senha", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Usuário criado com sucesso",
+     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *     ),
+     *     @OA\Response(response=422, description="Erro de validação")
+     * )
+     */
     public function store(Request $request)
     {
         try {
-            // Validação rigorosa
             $request->validate([
                 'nome'  => 'required|string|max:255',
                 'cpf'   => 'required|string|unique:usuarios,cpf',
@@ -36,6 +80,23 @@ class UsuarioController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/login",
+     *     tags={"Usuarios"},
+     *     summary="Login do usuário",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"cpf","senha"},
+     *             @OA\Property(property="cpf", type="string"),
+     *             @OA\Property(property="senha", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Login realizado"),
+     *     @OA\Response(response=401, description="Credenciais inválidas")
+     * )
+     */
     public function login(Request $request)
     {
         $usuario = User::where('cpf', $request->cpf)->first();
@@ -45,10 +106,5 @@ class UsuarioController extends Controller
         }
 
         return response()->json($usuario);
-    }
-
-    public function index()
-    {
-        return response()->json(User::all());
     }
 }
