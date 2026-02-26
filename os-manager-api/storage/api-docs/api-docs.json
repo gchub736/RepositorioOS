@@ -1,0 +1,205 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "OS Manager API",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Servidor Local"
+        }
+    ],
+    "paths": {
+        "/api/ordens": {
+            "get": {
+                "tags": [
+                    "OrdensServico"
+                ],
+                "summary": "Lista todas as ordens de serviço",
+                "operationId": "e9954d9a37630cdf929ae616b77d4103",
+                "responses": {
+                    "200": {
+                        "description": "Ordens retornadas com sucesso"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "OrdensServico"
+                ],
+                "summary": "Cria uma nova ordem de serviço",
+                "operationId": "57a9b14a3f752b7e724fb3443663c8e5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "titulo",
+                                    "descricao",
+                                    "usuario_id",
+                                    "prioridade",
+                                    "urgencia"
+                                ],
+                                "properties": {
+                                    "titulo": {
+                                        "type": "string"
+                                    },
+                                    "descricao": {
+                                        "type": "string"
+                                    },
+                                    "usuario_id": {
+                                        "type": "integer"
+                                    },
+                                    "prioridade": {
+                                        "type": "string"
+                                    },
+                                    "urgencia": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ordem criada com sucesso"
+                    },
+                    "400": {
+                        "description": "Erro ao criar ordem"
+                    }
+                }
+            }
+        },
+        "/api/ordens/{id}": {
+            "get": {
+                "tags": [
+                    "OrdensServico"
+                ],
+                "summary": "Mostra detalhes de uma ordem",
+                "operationId": "47855ee63438258517219d38894ca714",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ordem encontrada"
+                    },
+                    "404": {
+                        "description": "Ordem não encontrada"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "OrdensServico"
+                ],
+                "summary": "Atualiza uma ordem",
+                "operationId": "a5d619b2ba267041732114d8f319a67f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ordem atualizada"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "OrdensServico"
+                ],
+                "summary": "Remove uma ordem",
+                "operationId": "3ddb628fff4f4f9ebafbcbbc20f22bd1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ordem removida"
+                    }
+                }
+            }
+        },
+        "/api/usuarios": {
+            "get": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Lista todos os usuários",
+                "operationId": "e9d4d8b419dbef04b5748fbf9ccf3881",
+                "responses": {
+                    "200": {
+                        "description": "Lista de usuários"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Cria um novo usuário",
+                "operationId": "4e9dbcbdaaaf9faab196a82d5cbaea23",
+                "responses": {
+                    "201": {
+                        "description": "Usuário criado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Login do usuário",
+                "operationId": "97e61fbe879f3468ebf503966c2d3482",
+                "responses": {
+                    "200": {
+                        "description": "Login realizado"
+                    },
+                    "401": {
+                        "description": "Credenciais inválidas"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "OrdensServico",
+            "description": "Endpoints para gerenciamento de ordens de serviço"
+        },
+        {
+            "name": "Usuarios",
+            "description": "Endpoints para gerenciamento de usuários"
+        }
+    ]
+}

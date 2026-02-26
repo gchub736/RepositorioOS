@@ -20,9 +20,8 @@ return [
                 'docs_yaml' => 'api-docs.yaml',
                 'format_to_use_for_docs' => 'json',
 
-                // ⚠️ Aqui colocamos apenas os controllers que têm anotações
                 'annotations' => [
-                    base_path('app/Http/Controllers'),
+                    base_path('app'),
                 ],
             ],
         ],
