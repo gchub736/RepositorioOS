@@ -25,11 +25,6 @@ Para implantar o ambiente localmente, certifique-se de que o Docker e o Docker C
 - Backend API: http://localhost:8000
 - Porta do Banco de Dados: 5432
 
-## Credenciais de Acesso Inicial (Seed)
-
-- CPF: 12345678901
-- Senha: 123456
-
 ## Persistência de Dados
 
 O projeto utiliza volumes nomeados no Docker para garantir que os dados armazenados no PostgreSQL sejam persistidos mesmo após o encerramento ou remoção dos containers.
