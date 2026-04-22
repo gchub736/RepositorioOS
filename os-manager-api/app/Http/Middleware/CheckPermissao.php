@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckPermissao 
+class CheckPermissao //antigo nome: CheckCargo
 {
     /**
      * Handle an incoming request.

@@ -8,7 +8,6 @@ class HistoricoOs extends Model
 {
     protected $table = 'core.historico_os';
     
-    // Como só temos a data de criação no banco, desativamos os timestamps automáticos do Laravel
     public $timestamps = false; 
 
     protected $fillable = [

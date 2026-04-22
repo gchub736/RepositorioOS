@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Cargo; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule; // <-- Importação adicionada para corrigir a validação
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: "Usuarios", description: "Endpoints para gerenciamento de usuários")]
@@ -88,61 +89,61 @@ class UsuarioController extends Controller
         ]
     )]
     public function index(Request $request)
-{
-    $query = User::with('cargo');
+    {
+        $query = User::with('cargo');
 
-    // Contagem de ordens ativas baseada no relacionamento core.status
-    $query->withCount(['ordensSolicitadas as ordens_ativas' => function ($q) {
-        $q->whereHas('status', function($sq) {
-            $sq->where('nome', '!=', 'Fechado');
-        });
-    }]);
+        // Contagem de ordens ativas baseada no relacionamento core.status
+        $query->withCount(['ordensSolicitadas as ordens_ativas' => function ($q) {
+            $q->whereHas('status', function($sq) {
+                $sq->where('nome', '!=', 'Fechado');
+            });
+        }]);
 
-    // Filtros de Identidade
-    if ($request->filled('id')) {
-        $query->where('id', $request->id);
-    }
+        // Filtros de Identidade
+        if ($request->filled('id')) {
+            $query->where('id', $request->id);
+        }
 
-    if ($request->has('ativo')) {
-        $query->where('ativo', $request->boolean('ativo'));
-    }
+        if ($request->has('ativo')) {
+            $query->where('ativo', $request->boolean('ativo'));
+        }
 
-    // Filtros Textuais Específicos
-    if ($request->filled('nome')) {
-        $query->where('nome', 'ilike', '%' . $request->nome . '%');
-    }
+        // Filtros Textuais Específicos
+        if ($request->filled('nome')) {
+            $query->where('nome', 'ilike', '%' . $request->nome . '%');
+        }
 
-    if ($request->filled('email')) {
-        $query->where('email', 'ilike', '%' . $request->email . '%');
-    }
+        if ($request->filled('email')) {
+            $query->where('email', 'ilike', '%' . $request->email . '%');
+        }
 
-    if ($request->filled('cpf')) {
-        $query->where('cpf', 'like', $request->cpf . '%');
-    }
+        if ($request->filled('cpf')) {
+            $query->where('cpf', 'like', $request->cpf . '%');
+        }
 
-    // Filtro por Nome do Cargo
-    if ($request->filled('cargo')) {
-        $query->whereHas('cargo', fn($q) => 
-            $q->where('nome', $request->cargo)
+        // Filtro por Nome do Cargo
+        if ($request->filled('cargo')) {
+            $query->whereHas('cargo', fn($q) => 
+                $q->where('nome', $request->cargo)
+            );
+        }
+
+        // Busca Global (Nome, E-mail ou CPF)
+        if ($request->filled('busca')) {
+            $query->where(function ($q) use ($request) {
+                $busca = '%' . $request->busca . '%';
+                $q->where('nome', 'ilike', $busca)
+                  ->orWhere('email', 'ilike', $busca)
+                  ->orWhere('cpf', 'like', $request->busca . '%');
+            });
+        }
+
+        $perPage = min((int) $request->query('per_page', 15), 100);
+
+        return response()->json(
+            $query->orderBy('nome', 'asc')->paginate($perPage)
         );
     }
-
-    // Busca Global (Nome, E-mail ou CPF)
-    if ($request->filled('busca')) {
-        $query->where(function ($q) use ($request) {
-            $busca = '%' . $request->busca . '%';
-            $q->where('nome', 'ilike', $busca)
-              ->orWhere('email', 'ilike', $busca)
-              ->orWhere('cpf', 'like', $request->busca . '%');
-        });
-    }
-
-    $perPage = min((int) $request->query('per_page', 15), 100);
-
-    return response()->json(
-        $query->orderBy('nome', 'asc')->paginate($perPage)
-    );
-}
 
     #[OA\Post(
         path: "/api/usuarios",
@@ -165,11 +166,12 @@ class UsuarioController extends Controller
     )]
     public function store(Request $request)
     {
+        // Correção: Usando Rule::unique para evitar o erro de "database connection não configurada"
         $request->validate([
-            'nome'  => 'required|string|max:80',
-            'cpf'   => 'required|string|size:11|unique:gestoes.usuarios,cpf', 
-            'email' => 'required|email|unique:gestoes.usuarios,email', 
-            'senha' => 'required|string|min:4',
+            'nome'  => ['required', 'string', 'max:80'],
+            'cpf'   => ['required', 'string', 'size:11', Rule::unique(User::class, 'cpf')], 
+            'email' => ['required', 'email', Rule::unique(User::class, 'email')], 
+            'senha' => ['required', 'string', 'min:4'],
         ]);
 
         // INTEGRAÇÃO COM CARGOS: Pega o ID do 'Usuario' no banco
@@ -331,11 +333,12 @@ class UsuarioController extends Controller
         
         $usuario = User::findOrFail($id);
 
+        // Correção: Usando Rule::unique ignorando o ID atual
         $request->validate([
-            'nome'       => 'required|string|max:80',
-            'email'      => 'required|email|unique:gestoes.usuarios,email,' . $id,
-            'nova_senha' => 'sometimes|nullable|string|min:4',
-            'senha_atual'=> 'sometimes|nullable|string',
+            'nome'       => ['required', 'string', 'max:80'],
+            'email'      => ['required', 'email', Rule::unique(User::class, 'email')->ignore($id)],
+            'nova_senha' => ['sometimes', 'nullable', 'string', 'min:4'],
+            'senha_atual'=> ['sometimes', 'nullable', 'string'],
         ]);
 
         $usuario->nome  = $request->nome;

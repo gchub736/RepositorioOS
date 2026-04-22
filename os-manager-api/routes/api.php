@@ -42,11 +42,11 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/ordens', [OrdemServicoController::class, 'store']); 
 
     //tecnicos e admin
-    Route::middleware('cargo:Tecnico,Admin')->group(function () {
-        Route::get('/ordens', [OrdemServicoController::class, 'index']); 
-        Route::get('/ordens/{id}', [OrdemServicoController::class, 'show']);
-        Route::put('/ordens/{id}', [OrdemServicoController::class, 'update']);
-    });
+    //Route::middleware('cargo:Tecnico,Admin')->group(function () {
+    Route::get('/ordens', [OrdemServicoController::class, 'index']); 
+    Route::get('/ordens/{id}', [OrdemServicoController::class, 'show']);
+    Route::put('/ordens/{id}', [OrdemServicoController::class, 'update']);
+    //});
 
     //apenas administradores
     Route::middleware('cargo:Admin')->group(function () {

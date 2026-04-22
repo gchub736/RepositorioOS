@@ -72,7 +72,7 @@
                     {
                         "name": "ID",
                         "in": "query",
-                        "description": "Filtrar por ID numérico ou código de rastreio (UUID)",
+                        "description": "Filtrar por ID (UUID) ou código de rastreio",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -162,13 +162,13 @@
                     "Ordens de Servico"
                 ],
                 "summary": "Exibe detalhes de uma ordem de serviço específica",
-                "description": "Busca uma Ordem de Serviço pelo ID numérico ou pelo Código de Rastreio (UUID)",
+                "description": "Busca uma Ordem de Serviço pelo ID (UUID) ou pelo Código de Rastreio",
                 "operationId": "47855ee63438258517219d38894ca714",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID numérico ou Código de Rastreio (UUID)",
+                        "description": "ID (UUID) ou Código de Rastreio",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -208,6 +208,45 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "description": "Dados para atualização da Ordem de Serviço",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "status_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "urgencia_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "prioridade_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "tecnico_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "motivo_pausa": {
+                                        "type": "string",
+                                        "example": "Aguardando peça",
+                                        "nullable": true
+                                    },
+                                    "solucao": {
+                                        "type": "string",
+                                        "example": "Resolvido",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Ordem de serviço atualizada"

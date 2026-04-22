@@ -13,11 +13,13 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->alias([
-            'cargo' => \App\Http\Middleware\CheckPermissao::class,
-        ]);
-    })
+    ->withMiddleware(function (Middleware $middleware) {
+    $middleware->alias([
+        'cargo' => \App\Http\Middleware\CheckPermissao::class,
+    ]);
+    
+    $middleware->redirectGuestsTo(fn () => response()->json(['message' => 'Não autenticado.'], 401));
+})
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             if ($request->expectsJson() || $request->is('api/*')) {

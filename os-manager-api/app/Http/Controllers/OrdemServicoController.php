@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\OrdemServico;
 use App\Models\Status;
 use App\Http\Requests\OrdemServicoRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: "OrdensServico", description: "Endpoints para gerenciamento de ordens de serviço")]
@@ -40,27 +42,18 @@ class OrdemServicoController extends Controller
             new OA\Parameter(
                 name: "ID",
                 in: "query",
-                description: "Filtrar por ID numérico ou código de rastreio (UUID)",
+                description: "Filtrar por ID (UUID) ou código de rastreio",
                 required: false,
                 schema: new OA\Schema(type: "string") 
             )
         ],
         responses: [
-            new OA\Response(
-                response: 200, 
-                description: "Lista de ordens recuperada com sucesso"
-            ),
-            new OA\Response(
-                response: 401, 
-                description: "Não autenticado"
-            ),
-            new OA\Response(
-                response: 404, 
-                description: "Ordens de serviço não encontradas"
-            )
+            new OA\Response(response: 200, description: "Lista de ordens recuperada com sucesso"),
+            new OA\Response(response: 401, description: "Não autenticado"),
+            new OA\Response(response: 404, description: "Ordens de serviço não encontradas")
         ]
     )]
-   public function index(\Illuminate\Http\Request $request)
+   public function index(Request $request)
     {
         $query = OrdemServico::with([
             'usuario', 'tecnico',
@@ -74,53 +67,56 @@ class OrdemServicoController extends Controller
 
         $query->where('ativo', $statusAtivo);
 
-        // Captura tanto o 'id' minúsculo quanto o 'ID' maiúsculo do Swagger
         $buscaId = $request->input('id') ?? $request->input('ID');
 
-       // Se o front mandar o ID, verifica o formato antes de buscar
         if (!empty($buscaId)) {
             $query->where(function ($q) use ($buscaId) {
-                // Se o que foi digitado tiver formato de UUID (ex: 123e4567-e89b-12d3-a456-426614174000)
-                if (\Illuminate\Support\Str::isUuid($buscaId)) {
-                    $q->where('codigo_rastreio', $buscaId);
-                } 
-                // Se não for UUID, assume que é uma busca por ID numérico (e previne quebra se digitarem letras)
-                else {
-                    $q->where('id', is_numeric($buscaId) ? $buscaId : 0);
+                // CÓDIGO ANTIGO:
+                /*
+                if (Str::isUuid($buscaId)) {
+                    // Se for UUID, busca nas colunas de UUID
+                    $q->where('id', $buscaId)
+                      ->orWhere('codigo_rastreio', $buscaId);
+                } else {
+                    // Se não for UUID (ex: "24"), evita erro 22P02 do Postgres 
+                    // Se codigo_rastreio for string comum, busca aqui. 
+                    // Se for UUID, o whereRaw('1=0') impede o crash.
+                    $q->whereRaw('1=0'); 
                 }
-            }); //tava dando erro porque ele tava verificando o ID como se fosse UUID na query, aí dava erro de formato. Agora ele só tenta buscar por UUID se o formato for realmente de UUID, senão ele busca por ID numérico normalmente.
+                */
+
+                // CÓDIGO NOVO CORRIGIDO:
+                if (Str::isUuid($buscaId)) {
+                    $q->where('codigo_rastreio', $buscaId);
+                } elseif (is_numeric($buscaId)) {
+                    $q->where('id', $buscaId);
+                } else {
+                    $q->where('codigo_rastreio', $buscaId);
+                }
+            });
         }
 
-        // Filtros por relacionamentos
+        // Filtros por relacionamentos (Mantendo sua estrutura original)
         if ($request->filled('status')) {
-            $query->whereHas('status', fn($q) =>
-                $q->where('nome', $request->status)
-            );
+            $query->whereHas('status', fn($q) => $q->where('nome', $request->status));
         }
 
         if ($request->filled('categoria')) {
-            $query->whereHas('categoria', fn($q) =>
-                $q->where('nome', $request->categoria)
-            );
+            $query->whereHas('categoria', fn($q) => $q->where('nome', $request->categoria));
         }
 
         if ($request->filled('urgencia')) {
-            $query->whereHas('urgencia', fn($q) =>
-                $q->where('nome', $request->urgencia)
-            );
+            $query->whereHas('urgencia', fn($q) => $q->where('nome', $request->urgencia));
         }
 
         if ($request->filled('prioridade')) {
-            $query->whereHas('prioridade', fn($q) =>
-                $q->where('nome', $request->prioridade)
-            );
+            $query->whereHas('prioridade', fn($q) => $q->where('nome', $request->prioridade));
         }
 
         if ($request->filled('tecnico_id')) {
             $query->where('tecnico_id', $request->tecnico_id);
         }
 
-        // GIN INDEX: Busca otimizada usando Trigramas no Postgres
         if ($request->filled('busca')) {
             $query->where(function ($q) use ($request) {
                 $q->where('titulo', 'ilike', '%' . $request->busca . '%')
@@ -129,7 +125,6 @@ class OrdemServicoController extends Controller
         }
 
         return response()->json(
-            // Ordenar pela chave de partição (criado_em)
             $query->orderBy('criado_em', 'desc')->get(),
             200
         );
@@ -162,11 +157,8 @@ class OrdemServicoController extends Controller
     public function store(OrdemServicoRequest $request)
     {
         $usuarioLogado = $request->user();
-
         $idDonoDoChamado = $usuarioLogado->id;
-
         $cargoId = $usuarioLogado->cargo_id;
-        
         $cargosPrivilegiados = [1, 2]; 
 
         if (in_array($cargoId, $cargosPrivilegiados) && $request->filled('usuario_id')) {
@@ -188,7 +180,7 @@ class OrdemServicoController extends Controller
         ]);
 
         return response()->json(
-            $novaOrdem->load(['usuario', 'tecnico', 'status', 'categoria', 'urgencia', 'prioridade']), //.
+            $novaOrdem->load(['usuario', 'tecnico', 'status', 'categoria', 'urgencia', 'prioridade']),
             201
         );
     }
@@ -197,14 +189,14 @@ class OrdemServicoController extends Controller
         path: "/api/ordens/{id}",
         tags: ["Ordens de Servico"],
         summary: "Exibe detalhes de uma ordem de serviço específica",
-        description: "Busca uma Ordem de Serviço pelo ID numérico ou pelo Código de Rastreio (UUID)",
+        description: "Busca uma Ordem de Serviço pelo ID (UUID) ou pelo Código de Rastreio",
         security: [["bearerAuth" => []]],
         parameters: [
             new OA\Parameter(
                 name: "id",
                 in: "path",
                 required: true,
-                description: "ID numérico ou Código de Rastreio (UUID)",
+                description: "ID (UUID) ou Código de Rastreio",
                 schema: new OA\Schema(type: "string")
             )
         ],
@@ -222,24 +214,34 @@ class OrdemServicoController extends Controller
             'urgencia', 'prioridade'
         ]);
 
-        // Verifica se o que veio na URL é um UUID válido
-        if (\Illuminate\Support\Str::isUuid($id)) { 
-            $ordem = $query->where('codigo_rastreio', $id)->first();
-        } 
-        // Se não for UUID, tenta buscar pelo ID numérico
-        else {
-            $ordem = $query->where('id', is_numeric($id) ? $id : 0)->first();
-        }
+        $ordem = $query->where(function ($q) use ($id) {
+            // CÓDIGO ANTIGO:
+            /*
+            if (Str::isUuid($id)) {
+                $q->where('id', $id)->orWhere('codigo_rastreio', $id);
+            } else {
+                $q->whereRaw('1=0');
+            }
+            */
+
+            // CÓDIGO NOVO CORRIGIDO:
+            if (Str::isUuid($id)) {
+                $q->where('codigo_rastreio', $id);
+            } elseif (is_numeric($id)) {
+                $q->where('id', $id);
+            } else {
+                $q->where('codigo_rastreio', $id);
+            }
+        })->first();
 
         if (!$ordem) {
-            return response()->json([
-                'message' => 'Ordem de serviço não encontrada'
-            ], 404);
+            return response()->json(['message' => 'Ordem de serviço não encontrada'], 404);
         }
 
         return response()->json($ordem, 200);
     }
-    #[OA\Put(
+
+     #[OA\Put(
         path: "/api/ordens/{id}",
         tags: ["Ordens de Servico"],
         summary: "Atualiza uma ordem de serviço",
@@ -247,6 +249,24 @@ class OrdemServicoController extends Controller
         parameters: [
             new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "string"))
         ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            description: "Dados para atualização da Ordem de Serviço",
+            content: new OA\MediaType(
+                mediaType: "application/json",
+                schema: new OA\Schema(
+                    type: "object",
+                    properties: [
+                        new OA\Property(property: "status_id", type: "integer", example: 2),
+                        new OA\Property(property: "urgencia_id", type: "integer", example: 1),
+                        new OA\Property(property: "prioridade_id", type: "integer", example: 3),
+                        new OA\Property(property: "tecnico_id", type: "integer", example: 5),
+                        new OA\Property(property: "motivo_pausa", type: "string", nullable: true, example: "Aguardando peça"),
+                        new OA\Property(property: "solucao", type: "string", nullable: true, example: "Resolvido")
+                    ]
+                )
+            )
+        ),
         responses: [
             new OA\Response(response: 200, description: "Ordem de serviço atualizada"),
             new OA\Response(response: 403, description: "Acesso negado"),
@@ -255,9 +275,25 @@ class OrdemServicoController extends Controller
     )]
     public function update(OrdemServicoRequest $request, $id)
     {
-        $item = OrdemServico::where('codigo_rastreio', $id)
-            ->orWhere('id', is_numeric($id) ? $id : 0)
-            ->firstOrFail();
+        $item = OrdemServico::where(function ($q) use ($id) {
+            // CÓDIGO ANTIGO:
+            /*
+            if (Str::isUuid($id)) {
+                $q->where('id', $id)->orWhere('codigo_rastreio', $id);
+            } else {
+                $q->whereRaw('1=0');
+            }
+            */
+
+            // CÓDIGO NOVO CORRIGIDO:
+            if (Str::isUuid($id)) {
+                $q->where('codigo_rastreio', $id);
+            } elseif (is_numeric($id)) {
+                $q->where('id', $id);
+            } else {
+                $q->where('codigo_rastreio', $id);
+            }
+        })->firstOrFail();
 
         $dados = $request->only([
             'status_id',
@@ -268,13 +304,10 @@ class OrdemServicoController extends Controller
             'solucao'
         ]);
 
-        // Lógica de pausa
+        // Lógica de pausa original completa
         $statusAntigo = $item->status?->nome;
-
-        $statusNovo = $request->status
-            ?? $item->status?->nome;
-
-        $estadosPausa = ['Pausado', 'Aguardando Peça']; //hardcoded
+        $statusNovo = $request->status ?? $item->status?->nome;
+        $estadosPausa = ['Pausado', 'Aguardando Peça'];
 
         if (in_array($statusNovo, $estadosPausa)) {
             if (!in_array($statusAntigo, $estadosPausa)) {
@@ -283,19 +316,16 @@ class OrdemServicoController extends Controller
         } else {
             if (in_array($statusAntigo, $estadosPausa) && $item->pausado_em) {
                 $minutos = now()->diffInMinutes($item->pausado_em);
-
-                $dados['tempo_pausado_minutos'] =
-                    ($item->tempo_pausado_minutos ?? 0) + $minutos;
-
+                $dados['tempo_pausado_minutos'] = ($item->tempo_pausado_minutos ?? 0) + $minutos;
                 $dados['pausado_em'] = null;
                 $dados['motivo_pausa'] = null;
-            } // .... 
+            }
         }
 
         $item->update($dados);
 
         return response()->json(
-            $item->load(['usuario', 'tecnico', 'status', 'categoria', 'urgencia', 'prioridade']), //alterar pelo ID do Banco de dados
+            $item->load(['usuario', 'tecnico', 'status', 'categoria', 'urgencia', 'prioridade']), 
             200
         );
     }
@@ -315,14 +345,28 @@ class OrdemServicoController extends Controller
     )]
     public function destroy($id)
     {
-        $item = OrdemServico::where('codigo_rastreio', $id)
-            ->orWhere('id', is_numeric($id) ? $id : 0)
-            ->firstOrFail();
+        $item = OrdemServico::where(function ($q) use ($id) {
+            // CÓDIGO ANTIGO:
+            /*
+            if (Str::isUuid($id)) {
+                $q->where('id', $id)->orWhere('codigo_rastreio', $id);
+            } else {
+                $q->whereRaw('1=0');
+            }
+            */
+
+            // CÓDIGO NOVO CORRIGIDO:
+            if (Str::isUuid($id)) {
+                $q->where('codigo_rastreio', $id);
+            } elseif (is_numeric($id)) {
+                $q->where('id', $id);
+            } else {
+                $q->where('codigo_rastreio', $id);
+            }
+        })->firstOrFail();
             
         $item->update(['ativo' => false]);
 
-        return response()->json([
-            'message' => 'Enviado para a lixeira com sucesso'
-        ], 200);
+        return response()->json(['message' => 'Enviado para a lixeira com sucesso'], 200);
     }
 }

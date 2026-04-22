@@ -3,21 +3,23 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use App\Models\User;
 
 class StoreUsuarioRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return true; // Se a checagem já é feita no middleware, pode deixar true
     }
 
     public function rules(): array
     {
         return [
-            'nome'  => 'required|string|max:80',
-            'cpf'   => 'required|string|size:11|unique:gestoes.usuarios,cpf',
-            'email' => 'required|email|unique:gestoes.usuarios,email',
-            'senha' => 'required|string|min:4',
+            'nome'  => ['required', 'string', 'max:80'],
+            'cpf'   => ['required', 'string', 'size:11', Rule::unique(User::class, 'cpf')],
+            'email' => ['required', 'email', Rule::unique(User::class, 'email')],
+            'senha' => ['required', 'string', 'min:4'],
         ];
     }
 

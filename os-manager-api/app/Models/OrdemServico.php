@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str; // Importante para o UUID
+use Illuminate\Support\Str; //IMportação pro uuid
+use Illuminate\Support\Facades\Cache; // Importação para cache
+use OwenIt\Auditing\Contracts\Auditable;
 
-class OrdemServico extends Model
+class OrdemServico extends Model implements Auditable
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
     protected $table = 'core.ordem_servicos'; 
 
@@ -48,7 +51,6 @@ class OrdemServico extends Model
      * ==========================================
      * BOOTED 
      * ==========================================
-     * Garante que toda nova OS receba um código de rastreio único, usando UUID para evitar colisões.
      */
     protected static function booted()
     {
@@ -63,8 +65,6 @@ class OrdemServico extends Model
      * ==========================================
      * ROUTE MODEL BINDING 
      * ==========================================
-     * Faz com que o Laravel use o 'codigo_rastreio' nas URLs automaticamente,
-     * aproveitando o índice 'idx_os_rastreio_publico'.
      */
     public function getRouteKeyName()
     {
@@ -112,7 +112,7 @@ class OrdemServico extends Model
     }
 
     // ==========================================
-    // ACCESSORS metodos get para facilitar o acesso aos nomes relacionados (Evita ter que acessar $os->status->nome em várias partes do código)
+    // ACCESSORS
     // ==========================================
 
     public function getStatusNomeAttribute() { return $this->status?->nome; }
@@ -124,30 +124,44 @@ class OrdemServico extends Model
     // STATUS SLA 
     // ==========================================
 
-   public function getStatusSlaAttribute()
+    public function getStatusSlaAttribute()
     {
-        // Pegar diretamente as Foreign Keys (mais rápido, não precisa carregar o relacionamento)
         $statusId = $this->status_id;
         $urgenciaId = $this->urgencia_id;
 
-        // IDs dos status
-        $idFechado = 5; 
-        $idsPausados = [4, 5]; 
+        // Tempo de cache em segundos (86400 = 24 horas)
+        $ttl = 86400; 
+
+        // Busca os IDs dinamicamente no banco, mas salva na memória RAM para não travar o sistema
+        $idFechado = Cache::remember('id_status_fechado', $ttl, function () {
+            return Status::where('nome', 'Fechado')->value('id');
+        });
+
+        $idsPausados = Cache::remember('ids_status_pausados', $ttl, function () {
+            return Status::whereIn('nome', ['Pausado', 'Aguardando Peça'])->pluck('id')->toArray();
+        });
 
         if ($statusId === $idFechado) return null;
         if (in_array($statusId, $idsPausados)) return 'pausado';
 
+        // Busca dinâmica dos IDs de Urgência
+        $idMuitoAlta = Cache::remember('id_urg_muito_alta', $ttl, fn() => Urgencia::where('nome', 'Muito Alta')->value('id'));
+        $idAlta      = Cache::remember('id_urg_alta', $ttl, fn() => Urgencia::where('nome', 'Alta')->value('id'));
+        $idMedia     = Cache::remember('id_urg_media', $ttl, fn() => Urgencia::where('nome', 'Média')->value('id'));
+        $idBaixa     = Cache::remember('id_urg_baixa', $ttl, fn() => Urgencia::where('nome', 'Baixa')->value('id'));
+
         $limitesSla = [
-            4 => 2,  
-            3 => 4,  
-            2 => 8,  
-            1 => 24, //ID e Hora
+            $idMuitoAlta => 2,
+            $idAlta      => 4,
+            $idMedia     => 8,
+            $idBaixa     => 24,
         ];
 
         $limiteHoras = $limitesSla[$urgenciaId] ?? null;
         if (!$limiteHoras) return null;
 
         $limiteMinutos = $limiteHoras * 60;
+        
         $minutosCorridos = now()->diffInMinutes($this->criado_em);
         $minutosReais = $minutosCorridos - ($this->tempo_pausado_minutos ?? 0);
 
