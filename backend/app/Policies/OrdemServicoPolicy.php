@@ -57,13 +57,30 @@ class OrdemServicoPolicy
      */
     public function update(User $user, OrdemServico $os): bool
     {
+        // Permite que Técnicos retomem ordens pausadas mesmo sem a permissão direta
+        if ($user->cargo?->nome === 'Tecnico' && !empty($os->pausado_em)) {
+            return true;
+        }
+
         if (!$user->temPermissao('os.editar')) {
             return false;
         }
 
         // Regra para Técnicos: só editam o que está atribuído a eles
         if ($user->cargo?->nome === 'Tecnico') {
-            return $user->id === $os->tecnico_id;
+            // Técnico pode editar se for o técnico atribuído
+            if ($user->id === $os->tecnico_id) {
+                return true;
+            }
+
+            // Também permite que técnicos retomem ordens que estejam em estado de pausa
+            // Aceita tanto por nome do status quanto por flag de pausa `pausado_em` para maior robustez
+            if (!empty($os->pausado_em)) {
+                return true;
+            }
+
+            $estadosPausa = ['Pausado', 'Aguardando Peça'];
+            return in_array($os->status?->nome, $estadosPausa);
         }
 
         return true;

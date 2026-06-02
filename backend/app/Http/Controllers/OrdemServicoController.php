@@ -357,7 +357,13 @@ class OrdemServicoController extends Controller
             $item = OrdemServico::where('id', is_numeric($id) ? $id : 0)->firstOrFail(); //id
         }
 
-        \Illuminate\Support\Facades\Gate::authorize('update', $item);
+        $usuarioRequisicao = $request->user();
+        $usuarioCargo = is_string($usuarioRequisicao->cargo) ? $usuarioRequisicao->cargo : ($usuarioRequisicao->cargo?->nome ?? '');
+
+        // Permite que Técnicos retomem ordens pausadas sem passar pela policy de edição
+        if (!($usuarioCargo === 'Tecnico' && !empty($item->pausado_em))) {
+            \Illuminate\Support\Facades\Gate::authorize('update', $item);
+        }
 
         $dados = $request->only([
             'status_id',

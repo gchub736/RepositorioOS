@@ -25,9 +25,16 @@ class CheckPermissao
         $temAcesso = false;
 
         foreach ($permissoes as $permissao) {
+            // Primeiro, verifica se o usuário tem a permissão nomeada
             if ($usuario->temPermissao($permissao)) {
                 $temAcesso = true;
-                break; //Achou a permissão, para o loop
+                break;
+            }
+
+            // Também aceita quando o parâmetro corresponde ao nome do cargo do usuário
+            if ($usuario->cargo?->nome === $permissao) {
+                $temAcesso = true;
+                break;
             }
         }
 
