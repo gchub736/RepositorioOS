@@ -448,10 +448,98 @@
                 ]
             }
         },
+        "/api/categorias": {
+            "get": {
+                "tags": [
+                    "Ordens de Servico"
+                ],
+                "summary": "Lista categorias disponíveis",
+                "operationId": "ab7671ddeb6a93666f4a9a206a883ee1",
+                "responses": {
+                    "200": {
+                        "description": "Lista de categorias retornada com sucesso"
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/status": {
+            "get": {
+                "tags": [
+                    "Ordens de Servico"
+                ],
+                "summary": "Lista status disponíveis",
+                "operationId": "dfb8d8f059ca32c8e297f96874192e73",
+                "responses": {
+                    "200": {
+                        "description": "Lista de status retornada com sucesso"
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/urgencias": {
+            "get": {
+                "tags": [
+                    "Ordens de Servico"
+                ],
+                "summary": "Lista urgências disponíveis",
+                "operationId": "cdf8b66b28b17d4212001fef653253ef",
+                "responses": {
+                    "200": {
+                        "description": "Lista de urgências retornada com sucesso"
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/prioridades": {
+            "get": {
+                "tags": [
+                    "Ordens de Servico"
+                ],
+                "summary": "Lista prioridades disponíveis",
+                "operationId": "d54d2fb6a7c5f9c999bf5374cd1d8cf6",
+                "responses": {
+                    "200": {
+                        "description": "Lista de prioridades retornada com sucesso"
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/ordens/{id}/comentarios": {
             "post": {
                 "tags": [
-                    "Ordens de Serviço"
+                    "Chat"
                 ],
                 "summary": "Adicionar Comentário",
                 "description": "Adiciona um novo comentário a uma ordem de serviço. Apenas o criador, técnico responsável ou Admin podem comentar.",
@@ -518,7 +606,7 @@
         "/api/ordens/{id}/comentarios/{comentarioId}": {
             "put": {
                 "tags": [
-                    "Ordens de Serviço"
+                    "Chat"
                 ],
                 "summary": "Editar Comentário",
                 "description": "Edita um comentário existente. Usuários comuns só podem editar seus próprios comentários dentro de 5 minutos. Admin não tem limite de tempo.",
@@ -587,7 +675,7 @@
             },
             "delete": {
                 "tags": [
-                    "Ordens de Serviço"
+                    "Chat"
                 ],
                 "summary": "Excluir Comentário",
                 "description": "Exclui um comentário. Pode ser excluído apenas para o usuário atual ou para todos (deleção lógica). Apenas o autor ou Admin podem excluir.",
@@ -650,6 +738,38 @@
                     },
                     "422": {
                         "description": "Erro de validação"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/ordens/{id}/fixar": {
+            "post": {
+                "tags": [
+                    "Ordens de Servico"
+                ],
+                "summary": "Alterna o estado de fixação de uma ordem de serviço",
+                "operationId": "06fe1f53021187717351d33d39eee58c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ordem de Serviço fixada/desfixada com sucesso"
+                    },
+                    "403": {
+                        "description": "Acesso negado"
                     }
                 },
                 "security": [
@@ -1049,6 +1169,37 @@
                     }
                 ]
             }
+        },
+        "/api/teste": {
+            "get": {
+                "tags": [
+                    "System"
+                ],
+                "summary": "Endpoint público de teste",
+                "operationId": "f2be030b84efa6ef749ce2a13a69d8fa",
+                "responses": {
+                    "200": {
+                        "description": "API funcionando"
+                    }
+                }
+            }
+        },
+        "/api/health": {
+            "get": {
+                "tags": [
+                    "System"
+                ],
+                "summary": "Healthcheck da API",
+                "operationId": "56a9a406761b58a0252733e6597bcce8",
+                "responses": {
+                    "200": {
+                        "description": "Serviço e DB conectados"
+                    },
+                    "500": {
+                        "description": "Erro no healthcheck"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -1074,6 +1225,10 @@
             "description": "Endpoints para gerenciamento de usuários"
         },
         {
+            "name": "System",
+            "description": "Endpoints de saúde e teste"
+        },
+        {
             "name": "Dashboard",
             "description": "Dashboard"
         },
@@ -1082,8 +1237,8 @@
             "description": "Ordens de Servico"
         },
         {
-            "name": "Ordens de Serviço",
-            "description": "Ordens de Serviço"
+            "name": "Chat",
+            "description": "Chat"
         }
     ]
 }

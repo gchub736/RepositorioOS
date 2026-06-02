@@ -504,36 +504,72 @@ class OrdemServicoController extends Controller
         ], 200);
     }
 
+    #[OA\Get(
+        path: "/api/categorias",
+        tags: ["Ordens de Servico"],
+        summary: "Lista categorias disponíveis",
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Lista de categorias retornada com sucesso"),
+            new OA\Response(response: 401, description: "Não autenticado")
+        ]
+    )]
     public function categorias()
     {
         return response()->json(\App\Models\Categoria::orderBy('nome', 'asc')->get());
     }
 
+    #[OA\Get(
+        path: "/api/status",
+        tags: ["Ordens de Servico"],
+        summary: "Lista status disponíveis",
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Lista de status retornada com sucesso"),
+            new OA\Response(response: 401, description: "Não autenticado")
+        ]
+    )]
     public function status()
     {
         return response()->json(\App\Models\Status::orderBy('id', 'asc')->get());
     }
 
+    #[OA\Get(
+        path: "/api/urgencias",
+        tags: ["Ordens de Servico"],
+        summary: "Lista urgências disponíveis",
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Lista de urgências retornada com sucesso"),
+            new OA\Response(response: 401, description: "Não autenticado")
+        ]
+    )]
     public function urgencias()
     {
         return response()->json(\App\Models\Urgencia::orderBy('id', 'asc')->get());
     }
 
+    #[OA\Get(
+        path: "/api/prioridades",
+        tags: ["Ordens de Servico"],
+        summary: "Lista prioridades disponíveis",
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Lista de prioridades retornada com sucesso"),
+            new OA\Response(response: 401, description: "Não autenticado")
+        ]
+    )]
     public function prioridades()
     {
         return response()->json(\App\Models\Prioridade::orderBy('id', 'asc')->get());
     }
 
-    #[OA\Get(
-        path: "/api/ordens/{id}/comentarios",
-        summary: "Lista Categorias (Ignorar este endpoint, apenas placeholder se houvesse route)"
-    )]
     
     #[OA\Post(
         path: "/api/ordens/{id}/comentarios",
         summary: "Adicionar Comentário",
         description: "Adiciona um novo comentário a uma ordem de serviço. Apenas o criador, técnico responsável ou Admin podem comentar.",
-        tags: ["Ordens de Serviço"],
+        tags: ["Chat"],
         security: [["bearerAuth" => []]],
         parameters: [
             new OA\Parameter(name: "id", in: "path", required: true, description: "ID numérico ou Código de Rastreio (UUID) da OS", schema: new OA\Schema(type: "string"))
@@ -630,7 +666,7 @@ class OrdemServicoController extends Controller
         path: "/api/ordens/{id}/comentarios/{comentarioId}",
         summary: "Editar Comentário",
         description: "Edita um comentário existente. Usuários comuns só podem editar seus próprios comentários dentro de 5 minutos. Admin não tem limite de tempo.",
-        tags: ["Ordens de Serviço"],
+        tags: ["Chat"],
         security: [["bearerAuth" => []]],
         parameters: [
             new OA\Parameter(name: "id", in: "path", required: true, description: "ID numérico ou Código de Rastreio (UUID) da OS", schema: new OA\Schema(type: "string")),
@@ -687,7 +723,7 @@ class OrdemServicoController extends Controller
         path: "/api/ordens/{id}/comentarios/{comentarioId}",
         summary: "Excluir Comentário",
         description: "Exclui um comentário. Pode ser excluído apenas para o usuário atual ou para todos (deleção lógica). Apenas o autor ou Admin podem excluir.",
-        tags: ["Ordens de Serviço"],
+        tags: ["Chat"],
         security: [["bearerAuth" => []]],
         parameters: [
             new OA\Parameter(name: "id", in: "path", required: true, description: "ID numérico ou Código de Rastreio (UUID) da OS", schema: new OA\Schema(type: "string")),
@@ -738,6 +774,21 @@ class OrdemServicoController extends Controller
         }
     }
 
+    
+
+    #[OA\Post(
+        path: "/api/ordens/{id}/fixar",
+        tags: ["Ordens de Servico"],
+        summary: "Alterna o estado de fixação de uma ordem de serviço",
+        security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "string"))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Ordem de Serviço fixada/desfixada com sucesso"),
+            new OA\Response(response: 403, description: "Acesso negado")
+        ]
+    )]
     public function fixar($id)
     {
         $ordem = OrdemServico::findOrFail($id);
