@@ -223,7 +223,7 @@ class UsuarioController extends Controller
             ], 401);
         }
 
-        // Sessão unica do usuario 
+        // ===== SESSÃO ÚNICA POR USUÁRIO =====
         // Gerar novo JTI (JWT ID) único antes de emitir o token.
         $usuario->update([
             'jti_token' => \Illuminate\Support\Str::uuid()->toString(),
