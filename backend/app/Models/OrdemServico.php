@@ -46,6 +46,10 @@ class OrdemServico extends Model
         'sla_limite_data'
     ];
 
+    protected $casts = [
+        'pausado_em' => 'datetime',
+    ];
+
     /**
      * 
      * BOOTED 
@@ -127,7 +131,7 @@ class OrdemServico extends Model
         $statusNome = $this->status?->nome;
         $urgenciaNome = $this->urgencia?->nome;
 
-        if ($statusNome === 'Fechado') return null;
+        if (in_array($statusNome, ['Fechado', 'Cancelado'])) return null;
         if (in_array($statusNome, ['Pausado', 'Aguardando Peça'])) return 'pausado';
 
         $limitesSla = Configuracao::slaLimites();

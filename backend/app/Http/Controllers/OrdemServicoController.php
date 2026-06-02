@@ -379,24 +379,27 @@ class OrdemServicoController extends Controller
         $statusAntigo = $item->status?->nome;
 
         $statusNovo = $request->status
+            ?? ($request->status_id ? Status::find($request->status_id)?->nome : null)
             ?? $item->status?->nome;
 
-        $estadosPausa = ['Pausado', 'Aguardando Peça']; 
+        $estadosPausa = ['Pausado', 'Aguardando Peça'];
 
         if (in_array($statusNovo, $estadosPausa)) {
             if (!in_array($statusAntigo, $estadosPausa)) {
                 $dados['pausado_em'] = now();
             }
         } else {
-            if (in_array($statusAntigo, $estadosPausa) && $item->pausado_em) {
-                $minutos = now()->diffInMinutes($item->pausado_em);
+            if (in_array($statusAntigo, $estadosPausa)) {
+                if ($item->pausado_em) {
+                    $minutos = (int) round(abs(now()->floatDiffInMinutes($item->pausado_em)));
 
-                $dados['tempo_pausado_minutos'] =
-                    ($item->tempo_pausado_minutos ?? 0) + $minutos;
+                    $dados['tempo_pausado_minutos'] =
+                        ($item->tempo_pausado_minutos ?? 0) + $minutos;
+                }
 
                 $dados['pausado_em'] = null;
                 $dados['motivo_pausa'] = null;
-            }  
+            }
         }
 
         $usuarioLogado = $request->user();

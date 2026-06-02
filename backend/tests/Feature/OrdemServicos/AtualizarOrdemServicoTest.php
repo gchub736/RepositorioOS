@@ -91,4 +91,35 @@ class AtualizarOrdemServicoTest extends TestCase
             'solucao' => 'Finalizado pelo administrador',
         ]);
     }
+
+    public function test_tecnico_pode_retornar_ordem_de_pausa_para_em_andamento()
+    {
+        $tecnico = User::factory()->tecnico()->create();
+
+        $statusAndamento = Status::firstOrCreate(['nome' => 'Em Andamento']);
+        $statusPausa = Status::firstOrCreate(['nome' => 'Aguardando Peça']);
+
+        $ordemServico = OrdemServico::factory()->create([
+            'status_id' => $statusPausa->id,
+            'motivo_pausa' => 'Aguardando a reposição da peça',
+            'pausado_em' => now()->subMinutes(45),
+        ]);
+
+        $token = JWTAuth::fromUser($tecnico);
+
+        $response = $this->withHeader(
+            'Authorization',
+            "Bearer {$token}"
+        )->putJson("/api/ordens/{$ordemServico->id}", [
+            'status_id' => $statusAndamento->id,
+        ]);
+
+        $response->assertOk();
+
+        $this->assertDatabaseHas('ordem_servicos', [
+            'id' => $ordemServico->id,
+            'status_id' => $statusAndamento->id,
+            'pausado_em' => null,
+        ]);
+    }
 }
