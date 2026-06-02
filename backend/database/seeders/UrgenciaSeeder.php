@@ -13,7 +13,7 @@ class UrgenciaSeeder extends Seeder
     public function run(): void
     {
         \App\Models\Urgencia::firstOrCreate(['nome' => 'Baixa']);
-        \App\Models\Urgencia::firstOrCreate(['nome' => 'Média']);
+        \App\Models\Urgencia::firstOrCreate(['nome' => 'Media']);
         \App\Models\Urgencia::firstOrCreate(['nome' => 'Alta']);
     }
 }

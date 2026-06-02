@@ -13,7 +13,7 @@ class PrioridadeSeeder extends Seeder
     public function run(): void
     {
         \App\Models\Prioridade::firstOrCreate(['nome' => 'Baixa']);
-        \App\Models\Prioridade::firstOrCreate(['nome' => 'Média']);
+        \App\Models\Prioridade::firstOrCreate(['nome' => 'Media']);
         \App\Models\Prioridade::firstOrCreate(['nome' => 'Alta']);
     }
 }

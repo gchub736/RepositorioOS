@@ -26,7 +26,7 @@ class ConfiguracaoController extends Controller
         return response()->json([
             'sla_muito_alta' => $limites['Muito Alta'],
             'sla_alta'       => $limites['Alta'],
-            'sla_media'      => $limites['Média'],
+            'sla_media'      => $limites['Media'],
             'sla_baixa'      => $limites['Baixa'],
             'nome_sistema'   => Configuracao::get('nome_sistema', 'Central de Suporte Técnico'),
         ]);

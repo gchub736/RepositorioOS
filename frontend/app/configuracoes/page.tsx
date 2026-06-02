@@ -201,7 +201,7 @@ export default function Configuracoes() {
                   <input className={inputClass} type="number" min="1" value={slaAlta} onChange={e => setSlaAlta(e.target.value)} />
                 </div>
                 <div className="space-y-2">
-                  <label className={labelClass}>🟡 Média</label>
+                  <label className={labelClass}>🟡 Media</label>
                   <input className={inputClass} type="number" min="1" value={slaMedia} onChange={e => setSlaMedia(e.target.value)} />
                 </div>
                 <div className="space-y-2">

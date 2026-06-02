@@ -50,7 +50,7 @@ class Configuracao extends Model
         return [
             'Muito Alta' => (int) ($rows['sla_muito_alta'] ?? 2),
             'Alta'       => (int) ($rows['sla_alta']       ?? 4),
-            'Média'      => (int) ($rows['sla_media']      ?? 8),
+            'Media'      => (int) ($rows['sla_media']      ?? 8),
             'Baixa'      => (int) ($rows['sla_baixa']      ?? 24),
         ];
     }

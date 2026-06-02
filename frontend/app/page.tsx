@@ -134,12 +134,12 @@ export default function ListaChamados() {
   const statusList = (listaStatus.length ? listaStatus : [
     { id: 1, nome: "Novo" }, { id: 2, nome: "Em Andamento" }, { id: 3, nome: "Aguardando Peça" }, { id: 4, nome: "Pausado" }, { id: 5, nome: "Fechado" }
   ]).filter((s: any) => s.nome !== "Concluído");
-  const urgenciasList = listaUrgencias.length ? listaUrgencias : [
+  const urgenciasList = (listaUrgencias.length ? listaUrgencias : [
     { id: 1, nome: "Baixa" }, { id: 2, nome: "Media" }, { id: 3, nome: "Alta" }, { id: 4, nome: "Muito Alta" }
-  ];
-  const prioridadesList = listaPrioridades.length ? listaPrioridades : [
+  ]).map((u: any) => u.nome === "Média" ? { ...u, nome: "Media" } : u).filter((v, i, a) => a.findIndex(t => (t.nome === v.nome)) === i);
+  const prioridadesList = (listaPrioridades.length ? listaPrioridades : [
     { id: 1, nome: "Baixa" }, { id: 2, nome: "Media" }, { id: 3, nome: "Alta" }, { id: 4, nome: "Muito Alta" }
-  ];
+  ]).map((p: any) => p.nome === "Média" ? { ...p, nome: "Media" } : p).filter((v, i, a) => a.findIndex(t => (t.nome === v.nome)) === i);
 
   // --- 2. ESTADOS DE INTERFACE E MODAL ---
   const [tecnicos, setTecnicos] = useState([]);
@@ -422,8 +422,8 @@ export default function ListaChamados() {
       setChamadoSelecionado(osDetalhes);
       setStatus(osDetalhes.status?.nome || osDetalhes.status || "Novo");
       setTecnicoId(osDetalhes.tecnico_id || "");
-      setUrgencia(osDetalhes.urgencia?.nome || osDetalhes.urgencia || "Média");
-      setPrioridade(osDetalhes.prioridade?.nome || osDetalhes.prioridade || "Média");
+      setUrgencia(osDetalhes.urgencia?.nome === "Média" ? "Media" : (osDetalhes.urgencia === "Média" ? "Media" : (osDetalhes.urgencia?.nome || osDetalhes.urgencia || "Media")));
+      setPrioridade(osDetalhes.prioridade?.nome === "Média" ? "Media" : (osDetalhes.prioridade === "Média" ? "Media" : (osDetalhes.prioridade?.nome || osDetalhes.prioridade || "Media")));
       setSolucao(osDetalhes.solucao || "");
       setMotivoPausa(osDetalhes.motivo_pausa || "");
       setEditAnexo(null);
@@ -432,8 +432,8 @@ export default function ListaChamados() {
       setChamadoSelecionado(os);
       setStatus(os.status?.nome || os.status);
       setTecnicoId(os.tecnico_id || "");
-      setUrgencia(os.urgencia?.nome || os.urgencia || "Média");
-      setPrioridade(os.prioridade?.nome || os.prioridade || "Média");
+      setUrgencia(os.urgencia?.nome === "Média" ? "Media" : (os.urgencia === "Média" ? "Media" : (os.urgencia?.nome || os.urgencia || "Media")));
+      setPrioridade(os.prioridade?.nome === "Média" ? "Media" : (os.prioridade === "Média" ? "Media" : (os.prioridade?.nome || os.prioridade || "Media")));
       setSolucao(os.solucao || "");
       setMotivoPausa(os.motivo_pausa || "");
       setEditAnexo(null);
@@ -695,7 +695,6 @@ export default function ListaChamados() {
   const urgenciaCor: any = {
     "Muito Alta": "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
     Alta: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
-    "Média": "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
     Media: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
     Baixa: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
   };
