@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUsuarioRequest;
 use App\Models\User;
 use App\Models\Cargo; 
 use Illuminate\Http\Request;
@@ -91,8 +92,8 @@ class UsuarioController extends Controller
 {
     $query = User::with('cargo');
 
-    // Contagem de ordens ativas baseada no relacionamento status (ordens onde o usuário é o técnico)
-    $query->withCount(['ordensTecnico as ordens_ativas' => function ($q) {
+    // Contagem de ordens ativas baseada no relacionamento status
+    $query->withCount(['ordensSolicitadas as ordens_ativas' => function ($q) {
         $q->whereHas('status', function($sq) {
             $sq->where('nome', '!=', 'Fechado');
         });
@@ -105,8 +106,6 @@ class UsuarioController extends Controller
 
     if ($request->has('ativo')) {
         $query->where('ativo', $request->boolean('ativo'));
-    } else {
-        $query->where('ativo', true);
     }
 
     // Filtros Textuais Específicos
@@ -122,19 +121,11 @@ class UsuarioController extends Controller
         $query->where('cpf', 'like', $request->cpf . '%');
     }
 
-    // Filtro por Nome do Cargo (suporta múltiplos cargos separados por vírgula)
+    // Filtro por Nome do Cargo
     if ($request->filled('cargo')) {
-        $cargoInput = $request->cargo;
-        if (is_string($cargoInput) && str_contains($cargoInput, ',')) {
-            $cargos = array_map('trim', explode(',', $cargoInput));
-            $query->whereHas('cargo', fn($q) => 
-                $q->whereIn('nome', $cargos)
-            );
-        } else {
-            $query->whereHas('cargo', fn($q) => 
-                $q->where('nome', $cargoInput)
-            );
-        }
+        $query->whereHas('cargo', fn($q) => 
+            $q->where('nome', $request->cargo)
+        );
     }
 
     // Busca Global (Nome, E-mail ou CPF)
@@ -173,9 +164,8 @@ class UsuarioController extends Controller
             new OA\Response(response: 422, description: "Erro de validação")
         ]
     )]
-    public function store(\App\Http\Requests\StoreUsuarioRequest $request)
+    public function store(StoreUsuarioRequest $request)
     {
-
         // INTEGRAÇÃO COM CARGOS: Pega o ID do 'Usuario' no banco
         $cargoId = Cargo::where('nome', 'Usuario')->value('id');
 
@@ -185,8 +175,6 @@ class UsuarioController extends Controller
             'email'    => $request->email,
             'senha'    => Hash::make($request->senha),
             'cargo_id' => $cargoId, 
-            'jti_token'=> \Illuminate\Support\Str::uuid()->toString(),
-            'jti_token_created_at' => now(),
         ]);
 
         return response()->json($usuario->load('cargo'), 201);
@@ -210,8 +198,16 @@ class UsuarioController extends Controller
         ]
     )]
     
-    public function login(\App\Http\Requests\LoginUsuarioRequest $request)
+    public function login(Request $request)
     {
+        $request->merge([
+            'cpf' => preg_replace('/\D/', '', (string) $request->input('cpf')),
+        ]);
+
+        $request->validate([
+            'cpf'   => 'required|string|size:11|regex:/^[0-9]+$/',
+            'senha' => 'required',
+        ]);
 
         $usuario = User::where('cpf', $request->cpf)->first();
 
@@ -221,26 +217,27 @@ class UsuarioController extends Controller
             ], 401);
         }
 
-        if (!\Illuminate\Support\Facades\Hash::check($request->senha, $usuario->senha)) {
+        if (!Hash::check($request->senha, $usuario->senha)) {
             return response()->json([
                 'message' => 'Credenciais inválidas'
             ], 401);
         }
 
-        //Uma sessão por usuario
-        //Gerar novo JTI (JWT ID) único para esta sessão
-        //Invalidar qualquer token anterior deste usuário
+        // Sessão unica do usuario 
+        // Gerar novo JTI (JWT ID) único antes de emitir o token.
         $usuario->update([
             'jti_token' => \Illuminate\Support\Str::uuid()->toString(),
             'jti_token_created_at' => now(),
         ]);
 
-        // Gerar um token novo — login() chama getJWTCustomClaims() no $usuario atualizado,
-        // garantindo que o JTI no token bata com o JTI no banco
-        $token = auth('api')->login($usuario);
+        if (!$token = auth('api')->login($usuario)) {
+            return response()->json([
+                'message' => 'Credenciais inválidas'
+            ], 401);
+        }
 
         return response()->json([
-            'user'  => auth('api')->user()->load('cargo'),
+            'user'  => $usuario->load('cargo'),
             'token' => $token
         ]);
     }
@@ -297,9 +294,13 @@ class UsuarioController extends Controller
             new OA\Response(response: 422, description: "Erro de validação")
         ]
     )]
-    public function update(\App\Http\Requests\UpdateUsuarioCargoRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $usuario = User::findOrFail($id);
+
+        $request->validate([
+            'cargo' => 'required|string|in:Usuario,Tecnico,Admin',
+        ]);
 
         // Atualiza pelo ID do cargo
         $cargoId = Cargo::where('nome', $request->cargo)->value('id');
@@ -353,9 +354,20 @@ class UsuarioController extends Controller
             new OA\Response(response: 422, description: "Erro de validação")
         ]
     )]
-    public function updatePerfil(\App\Http\Requests\UpdateUsuarioPerfilRequest $request, $id)
+    public function updatePerfil(Request $request, $id)
     {
+        if ($request->user()->id != $id) {
+            return response()->json(['message' => 'Você não tem permissão para editar este perfil.'], 403);
+        }
+        
         $usuario = User::findOrFail($id);
+
+        $request->validate([
+            'nome'       => 'required|string|max:80',
+            'email' => 'required|email|unique:usuarios,email,' . $id,
+            'nova_senha' => 'sometimes|nullable|string|min:4',
+            'senha_atual'=> 'sometimes|nullable|string',
+        ]);
 
         $usuario->nome  = $request->nome;
         $usuario->email = $request->email;
@@ -388,10 +400,7 @@ class UsuarioController extends Controller
     public function destroy($id)
     {
         $usuario = User::findOrFail($id);
-        $usuario->update([
-            'ativo' => false,
-            'jti_token' => null, // Invalida a sessão ativa imediatamente
-        ]);
+        $usuario->delete(); //implementar soft delete
         return response()->json(['message' => 'Usuário removido com sucesso']);
     }
 }

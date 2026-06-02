@@ -4,8 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrdemServicoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ConfiguracaoController;
-use App\Http\Controllers\NotificacaoController;
 
 //rotas públicas
 
@@ -22,11 +20,10 @@ Route::get('/health', function () {
             'timestamp' => now()->toDateTimeString()
         ], 200);
     } catch (\Exception $e) {
-        \Log::error('Healthcheck database connection error: ' . $e->getMessage());
         return response()->json([
             'status' => 'ERROR',
             'database' => 'Disconnected',
-            'message' => 'Erro interno ao conectar ao banco de dados.'
+            'message' => $e->getMessage()
         ], 500);
     }
 });
@@ -44,32 +41,24 @@ Route::middleware(['auth:api', 'validate-jti'])->group(function () {
     Route::put('/usuarios/{id}/perfil', [UsuarioController::class, 'updatePerfil']);
     Route::post('/ordens', [OrdemServicoController::class, 'store']); 
     Route::get('/ordens/{id}/anexo', [OrdemServicoController::class, 'downloadAnexo']);
-    
+    Route::post('/ordens/{id}/fixar', [OrdemServicoController::class, 'fixar']);
+
     // Anti-flood (Rate Limit) nos comentários (15 reqs por minuto)
     Route::middleware('throttle:15,1')->group(function () {
         Route::post('/ordens/{id}/comentarios', [OrdemServicoController::class, 'addComentario']);
         Route::put('/ordens/{id}/comentarios/{comentarioId}', [OrdemServicoController::class, 'updateComentario']);
         Route::delete('/ordens/{id}/comentarios/{comentarioId}', [OrdemServicoController::class, 'deleteComentario']);
     });
-    
-    Route::get('/ordens', [OrdemServicoController::class, 'index']); 
+    Route::get('/ordens', [OrdemServicoController::class, 'index']);
     Route::get('/ordens/{id}', [OrdemServicoController::class, 'show']);
-    
-    // Auxiliares/Meta
     Route::get('/categorias', [OrdemServicoController::class, 'categorias']);
     Route::get('/status', [OrdemServicoController::class, 'status']);
     Route::get('/urgencias', [OrdemServicoController::class, 'urgencias']);
     Route::get('/prioridades', [OrdemServicoController::class, 'prioridades']);
 
-    // Notificações
-    Route::get('/notificacoes', [NotificacaoController::class, 'index']);
-    Route::put('/notificacoes/ler-todas', [NotificacaoController::class, 'lerTodas']);
-    Route::put('/notificacoes/{id}/ler', [NotificacaoController::class, 'ler']);
-
     //tecnicos e admin
     Route::middleware('cargo:Tecnico,Admin')->group(function () {
         Route::put('/ordens/{id}', [OrdemServicoController::class, 'update']);
-        Route::post('/ordens/{id}/fixar', [OrdemServicoController::class, 'fixar']);
     });
 
     //apenas administradores
@@ -80,8 +69,6 @@ Route::middleware(['auth:api', 'validate-jti'])->group(function () {
         Route::delete('/ordens/{id}', [OrdemServicoController::class, 'destroy']);
         //dashboard
         Route::get('/dashboard/estatisticas', [DashboardController::class, 'estatisticas']);
-        //configuracoes
-        Route::get('/configuracoes', [ConfiguracaoController::class, 'index']);
-        Route::put('/configuracoes', [ConfiguracaoController::class, 'update']);
+        
     });
 });

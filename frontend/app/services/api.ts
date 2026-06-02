@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/$/, '');
+
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: apiBaseUrl,
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
@@ -9,9 +11,12 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = typeof window !== 'undefined' ? sessionStorage.getItem('token') : null;
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  if (typeof window !== 'undefined') {
+    const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
   return config;
 });

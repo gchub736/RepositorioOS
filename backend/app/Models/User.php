@@ -45,6 +45,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->senha;
     }
 
+    public function setCpfAttribute($value): void
+    {
+        $this->attributes['cpf'] = preg_replace('/\D/', '', (string) $value);
+    }
+
     protected function casts(): array
     {
         return [
@@ -53,7 +58,9 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
-    //relacionamento com OS
+    // ==========================================
+    // RELACIONAMENTOS COM ORDEM DE SERVIÇO
+    // ==========================================
     public function ordensSolicitadas()
     {
         return $this->hasMany(OrdemServico::class, 'usuario_id')
@@ -67,7 +74,9 @@ class User extends Authenticatable implements JWTSubject
                     ->orderBy('criado_em', 'desc');
     }
 
-    //relacionamento com Cargo
+    // ==========================================
+    // GESTÃO DE ACESSOS
+    // ==========================================
 
     public function cargo()
     {
@@ -103,7 +112,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->cargo ? $this->cargo->permissoes()->where('nome', $nomePermissao)->exists() : false;
     }
 
-    // metodos JWT
+    // ==========================================
+    // MÉTODOS JWT
+    // ==========================================
 
     public function getJWTIdentifier()
     {

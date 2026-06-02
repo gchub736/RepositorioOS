@@ -9,7 +9,8 @@ class CreateUsuarioTest extends TestCase
 {
     public function test_usuario_pode_se_cadastrar()
     {
-        $cpf = substr(number_format(microtime(true) * 1000000, 0, '', ''), -11);
+        // Use um CPF válido para o cenário em que VALIDAR_CPF=true.
+        $cpf = '12345678909';
         $email = 'user_cadastrar_' . uniqid() . '@example.com';
 
         $response = $this->postJson('/api/usuarios', [

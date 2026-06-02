@@ -50,7 +50,12 @@ export default function Sidebar() {
       .then(res => {
         setNotificacoes(res.data || []);
       })
-      .catch(err => console.error("Erro ao carregar notificações", err));
+      .catch(err => {
+        // Ignora 404 silenciosamente (endpoint ainda não implementado no backend)
+        if (err.response?.status !== 404) {
+          console.error("Erro ao carregar notificações", err);
+        }
+      });
   };
 
   const [initialized, setInitialized] = useState(false);
@@ -144,8 +149,10 @@ export default function Sidebar() {
     try {
       await api.put('/notificacoes/ler-todas');
       setNotificacoes(prev => prev.map(n => ({ ...n, lida: true })));
-    } catch (err) {
-      console.error("Erro ao marcar todas como lidas", err);
+    } catch (err: any) {
+      if (err.response?.status !== 404) {
+        console.error("Erro ao marcar todas como lidas", err);
+      }
     }
   };
 
@@ -153,8 +160,10 @@ export default function Sidebar() {
     try {
       await api.put(`/notificacoes/${id}/ler`);
       setNotificacoes(prev => prev.map(n => n.id === id ? { ...n, lida: true } : n));
-    } catch (err) {
-      console.error("Erro ao marcar notificação como lida", err);
+    } catch (err: any) {
+      if (err.response?.status !== 404) {
+        console.error("Erro ao marcar notificação como lida", err);
+      }
     }
   };
 

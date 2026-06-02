@@ -32,6 +32,33 @@ class LoginTest extends TestCase
         ]);
     }
 
+    public function test_usuario_pode_fazer_login_quando_jti_token_eh_nulo()
+    {
+        // Arrange
+        $cpf = fake()->numerify('###########');
+
+        User::factory()->create([
+            'cpf' => $cpf,
+            'senha' => 'password',
+            'jti_token' => null,
+            'jti_token_created_at' => null,
+        ]);
+
+        // Act
+        $response = $this->postJson('/api/login', [
+            'cpf' => $cpf,
+            'senha' => 'password',
+        ]);
+
+        // Assert
+        $response->assertOk();
+
+        $response->assertJsonStructure([
+            'user',
+            'token'
+        ]);
+    }
+
     public function test_usuario_nao_pode_fazer_login_com_credenciais_invalidas()
     {
         // Arrange
