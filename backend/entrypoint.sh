@@ -15,6 +15,10 @@ if [ ! -d "vendor" ]; then
   composer install --no-interaction --optimize-autoloader
 fi
 
+# Inicia o scheduler do Laravel em background (executa backup diário, limpeza, etc.)
+echo "Iniciando scheduler em background..."
+php artisan schedule:work >> /var/www/storage/logs/scheduler.log 2>&1 &
+
 # Sobe o servidor do Laravel
 echo "Iniciando servidor da API..."
 php artisan serve --host=0.0.0.0 --port=8000

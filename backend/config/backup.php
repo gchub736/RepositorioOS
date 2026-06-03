@@ -335,30 +335,24 @@ return [
             'keep_all_backups_for_days' => 7,
 
             /*
-             * After the "keep_all_backups_for_days" period is over, the most recent backup
-             * of that day will be kept. Older backups within the same day will be removed.
-             * If you create backups only once a day, no backups will be removed yet.
+             * Após 7 dias, não manter backups diários adicionais.
              */
-            'keep_daily_backups_for_days' => 16,
+            'keep_daily_backups_for_days' => 0,
 
             /*
-             * After the "keep_daily_backups_for_days" period is over, the most recent backup
-             * of that week will be kept. Older backups within the same week will be removed.
-             * If you create backups only once a week, no backups will be removed yet.
+             * Não manter backups semanais.
              */
-            'keep_weekly_backups_for_weeks' => 8,
+            'keep_weekly_backups_for_weeks' => 0,
 
             /*
-             * After the "keep_weekly_backups_for_weeks" period is over, the most recent backup
-             * of that month will be kept. Older backups within the same month will be removed.
+             * Não manter backups mensais.
              */
-            'keep_monthly_backups_for_months' => 4,
+            'keep_monthly_backups_for_months' => 0,
 
             /*
-             * After the "keep_monthly_backups_for_months" period is over, the most recent backup
-             * of that year will be kept. Older backups within the same year will be removed.
+             * Não manter backups anuais.
              */
-            'keep_yearly_backups_for_years' => 2,
+            'keep_yearly_backups_for_years' => 0,
 
             /*
              * After cleaning up the backups remove the oldest backup until

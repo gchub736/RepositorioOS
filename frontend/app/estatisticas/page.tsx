@@ -79,7 +79,7 @@ export default function Estatisticas() {
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800 mt-1">
               <div className="flex justify-between text-[10px] md:text-xs font-bold mb-1">
                 <span className="text-slate-600 dark:text-slate-300 flex items-center gap-1">
-                  NA LIXEIRA (Inativos)
+                  INATIVOS
                 </span>
                 <span className="text-red-600 dark:text-red-400">{geral.excluidos}</span>
               </div>
@@ -112,7 +112,7 @@ export default function Estatisticas() {
               </div>
             ))}
             {top_tecnicos.length === 0 && (
-              <p className="text-[10px] md:text-xs text-slate-400 italic">Nenhum chamado resolvido ainda.</p>
+              <p className="text-[10px] md:text-xs text-slate-400 italic">Nenhum chamado finalizado por um técnico ativo ainda.</p>
             )}
           </div>
         </div>
@@ -138,7 +138,7 @@ export default function Estatisticas() {
         {/* CARD 5: POR CATEGORIA */}
         <div className={`${card} md:col-span-2`}>
           <h3 className="text-[10px] md:text-xs font-bold text-slate-400 uppercase mb-4 tracking-widest">Chamados por Categoria</h3>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center flex-1">
             {/* Barras de progresso à esquerda */}
             <div className="space-y-4">

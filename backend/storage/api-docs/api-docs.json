@@ -779,6 +779,120 @@
                 ]
             }
         },
+        "/api/forgot-password": {
+            "post": {
+                "tags": [
+                    "Senha"
+                ],
+                "summary": "Solicita recuperação de senha via email",
+                "operationId": "3b968e5662bb656a437a1b0b32e13f02",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "cpf"
+                                ],
+                                "properties": {
+                                    "cpf": {
+                                        "type": "string",
+                                        "example": "12345678901"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Solicitação processada"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    },
+                    "429": {
+                        "description": "Muitas tentativas"
+                    }
+                }
+            }
+        },
+        "/api/reset-password/validate": {
+            "get": {
+                "tags": [
+                    "Senha"
+                ],
+                "summary": "Valida se o token de recuperação é válido",
+                "description": "Valida o token de recuperação (verifica se é válido e não expirou).",
+                "operationId": "1ff7504fec37893dccad3bf69ae10254",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Token válido"
+                    },
+                    "400": {
+                        "description": "Token inválido ou expirado"
+                    }
+                }
+            }
+        },
+        "/api/reset-password": {
+            "post": {
+                "tags": [
+                    "Senha"
+                ],
+                "summary": "Redefine a senha com o token de recuperação",
+                "description": "Redefine a senha usando o token válido.\nToken é de uso único e excluído após uso.",
+                "operationId": "21013ded7ef890db3153c11311f81902",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "token",
+                                    "nova_senha",
+                                    "nova_senha_confirmacao"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "type": "string"
+                                    },
+                                    "nova_senha": {
+                                        "type": "string",
+                                        "example": "novaSenha123"
+                                    },
+                                    "nova_senha_confirmacao": {
+                                        "type": "string",
+                                        "example": "novaSenha123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Senha atualizada com sucesso"
+                    },
+                    "400": {
+                        "description": "Token inválido ou expirado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            }
+        },
         "/api/usuarios": {
             "get": {
                 "tags": [
@@ -1219,6 +1333,10 @@
         {
             "name": "Notificacoes",
             "description": "Gerenciamento das notificações de sistema"
+        },
+        {
+            "name": "Senha",
+            "description": "Endpoints para recuperação de senha"
         },
         {
             "name": "Usuarios",
