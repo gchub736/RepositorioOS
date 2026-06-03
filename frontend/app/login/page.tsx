@@ -63,7 +63,12 @@ if (resposta.status === 200) {
         setTempoBloqueio(segundos);
         setErroVisual('');
       } else {
-        setErroVisual(isCadastro ? "Erro ao criar conta. Verifique os dados." : "Credenciais inválidas. Tente novamente.");
+        let errorMsg = isCadastro ? "Erro ao criar conta. Verifique os dados." : "Credenciais inválidas. Tente novamente.";
+        if (err.response?.data?.message) {
+            // Se for erro de validação (422), a API costuma mandar a mensagem exata (ex: "Este CPF já está cadastrado.")
+            errorMsg = err.response.data.message;
+        }
+        setErroVisual(errorMsg);
       }
     } finally {
       setIsSubmitting(false);

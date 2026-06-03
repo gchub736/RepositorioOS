@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use OpenApi\Attributes as OA;
+use App\Rules\ValidaCpf;
 
 #[OA\Tag(name: "Senha", description: "Endpoints para recuperação de senha")]
 class PasswordResetController extends Controller
@@ -38,7 +39,7 @@ class PasswordResetController extends Controller
     public function forgotPassword(Request $request)
     {
         $request->validate([
-            'cpf' => 'required|string|size:11',
+            'cpf' => ['required', 'string', 'size:11', new ValidaCpf()],
         ]);
 
         $usuario = User::where('cpf', $request->cpf)

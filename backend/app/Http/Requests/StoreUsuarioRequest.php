@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\ValidaCpf;
 
 class StoreUsuarioRequest extends FormRequest
 {
@@ -15,7 +16,7 @@ class StoreUsuarioRequest extends FormRequest
     {
         return [
             'nome'  => 'required|string|max:80',
-            'cpf'   => 'required|string|size:11|regex:/^[0-9]+$/|unique:usuarios,cpf',
+            'cpf'   => ['required', 'string', 'size:11', 'regex:/^[0-9]+$/', 'unique:usuarios,cpf', new ValidaCpf()],
             'email' => 'required|email|unique:usuarios,email',
             'senha' => 'required|string|min:4',
         ];
