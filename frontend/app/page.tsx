@@ -473,6 +473,7 @@ export default function ListaChamados() {
       setNovoComentario("");
       setComentarioRespondendo(null);
       await recarregarChamado(chamadoSelecionado.id);
+      window.dispatchEvent(new Event('notificacoes:atualizar'));
     } catch (err) {
       alert("Erro ao enviar comentário.");
     } finally {
@@ -526,6 +527,7 @@ export default function ListaChamados() {
       setChamadoSelecionado(null);
       setEditAnexo(null);
       buscarChamados();
+      window.dispatchEvent(new Event('notificacoes:atualizar'));
     } catch (err) {
       alert("Erro ao atualizar a ordem de serviço.");
     }
@@ -923,7 +925,7 @@ export default function ListaChamados() {
                   return (
                     <tr
                       key={os.id}
-                      className={`transition-colors ${navMode && navIndex === index ? 'bg-blue-100 dark:bg-blue-900/40 ring-2 ring-blue-500 ring-inset cursor-pointer' : 'hover:bg-slate-50 dark:hover:bg-slate-800/30'} ${slaStatus === "vencido" ? "border-l-4 border-red-500" : slaStatus === "alerta" ? "border-l-4 border-yellow-400" : ""}`}
+                      className={`transition-colors ${navMode && navIndex === index ? 'bg-blue-100 dark:bg-blue-900/40 ring-2 ring-blue-500 ring-inset cursor-pointer' : 'hover:bg-slate-50 dark:hover:bg-slate-800/30'} ${slaStatus === "vencido" ? "border-l-4 border-l-red-500" : slaStatus === "alerta" ? "border-l-4 border-l-yellow-400" : ""}`}
                     >
                       <td className="px-2 py-3 font-mono text-blue-600 dark:text-blue-400 truncate overflow-hidden">#{os.id}</td>
                       <td className="px-2 py-3 font-bold text-slate-800 dark:text-slate-200 overflow-hidden">

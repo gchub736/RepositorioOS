@@ -7,6 +7,7 @@ use App\Models\Status;
 use App\Models\Urgencia;
 use App\Models\Prioridade;
 use App\Http\Requests\OrdemServicoRequest;
+use App\Services\NotificacaoService;
 use Illuminate\Support\Facades\Storage;
 use OpenApi\Attributes as OA;
 
@@ -421,16 +422,7 @@ class OrdemServicoController extends Controller
         // Recarrega as relações atualizadas
         $item->load(['status', 'tecnico', 'urgencia', 'prioridade']);
 
-        if ($antigoTecnicoId != $item->tecnico_id && !empty($item->tecnico_id)) {
-            \App\Models\Notificacao::create([
-                'usuario_id' => $item->tecnico_id,
-                'ordem_servico_id' => $item->id,
-                'titulo' => 'Nova OS atribuída',
-                'mensagem' => "Você foi atribuído à ordem de serviço #{$item->id}: '{$item->titulo}'",
-                'lida' => false,
-                'criado_em' => now()
-            ]);
-        }
+        NotificacaoService::notificarAtribuicao($item, $antigoTecnicoId ? (int) $antigoTecnicoId : null);
 
         $alteracoes = [];
         if ($antigoStatus !== $item->status?->nome) {
@@ -607,11 +599,11 @@ class OrdemServicoController extends Controller
             return response()->json(['message' => 'Ordem de serviço não encontrada.'], 404);
         }
 
-        $user = $request->user();
+        $user = $request->user()->loadMissing('cargo');
         $userCargo = is_string($user->cargo) ? $user->cargo : ($user->cargo?->nome ?? '');
 
         // Autorização: Apenas criador da OS, técnico atribuído ou Admin podem comentar
-        if ($userCargo !== 'Admin' && $ordem->usuario_id !== $user->id && $ordem->tecnico_id !== $user->id) {
+        if ($userCargo !== 'Admin' && (int) $ordem->usuario_id !== (int) $user->id && (int) $ordem->tecnico_id !== (int) $user->id) {
             return response()->json(['message' => 'Você não tem permissão para comentar nesta ordem de serviço.'], 403);
         }
 
@@ -635,29 +627,7 @@ class OrdemServicoController extends Controller
             'criado_em'  => now()
         ]);
 
-        // Notificar o dono da OS se não foi ele quem comentou
-        if ($ordem->usuario_id !== $user->id) {
-            \App\Models\Notificacao::create([
-                'usuario_id' => $ordem->usuario_id,
-                'ordem_servico_id' => $ordem->id,
-                'titulo' => 'Nova mensagem no chamado',
-                'mensagem' => "{$user->nome} respondeu no seu chamado #{$ordem->id}: '{$ordem->titulo}'.",
-                'lida' => false,
-                'criado_em' => now()
-            ]);
-        }
-
-        // Notificar o técnico caso exista, e ele não seja o autor do comentário
-        if (!empty($ordem->tecnico_id) && $ordem->tecnico_id !== $user->id) {
-            \App\Models\Notificacao::create([
-                'usuario_id' => $ordem->tecnico_id,
-                'ordem_servico_id' => $ordem->id,
-                'titulo' => 'Nova mensagem no chamado',
-                'mensagem' => "{$user->nome} comentou no chamado #{$ordem->id} que você está acompanhando.",
-                'lida' => false,
-                'criado_em' => now()
-            ]);
-        }
+        NotificacaoService::notificarComentario($ordem, $user);
 
         return response()->json($comentario->load(['usuario', 'parent.usuario']), 201);
     }

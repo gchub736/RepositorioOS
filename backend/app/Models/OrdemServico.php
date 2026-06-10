@@ -140,7 +140,7 @@ class OrdemServico extends Model
         if (!$limiteHoras) return null;
 
         $limiteMinutos = $limiteHoras * 60;
-        $minutosCorridos = now()->diffInMinutes($this->criado_em);
+        $minutosCorridos = abs(now()->diffInMinutes($this->criado_em));
         $minutosReais = $minutosCorridos - ($this->tempo_pausado_minutos ?? 0);
 
         if ($limiteMinutos <= 0) return 'vencido'; 

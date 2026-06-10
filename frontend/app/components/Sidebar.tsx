@@ -98,10 +98,15 @@ export default function Sidebar() {
     // Carrega notificações e inicia polling
     fetchNotificacoes();
     const interval = setInterval(fetchNotificacoes, 30000);
+    const handleAtualizarNotificacoes = () => fetchNotificacoes();
+    window.addEventListener('notificacoes:atualizar', handleAtualizarNotificacoes);
     
     setInitialized(true);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('notificacoes:atualizar', handleAtualizarNotificacoes);
+    };
   }, [pathname, initialized]);
 
   // 2. Proteção de rotas instantânea por pathname (Zero chamadas de rede no clique)

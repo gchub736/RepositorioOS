@@ -104,4 +104,80 @@ class NotificacoesTest extends TestCase
         // Assert: Status lida atualizado
         $this->assertTrue($notificacao->refresh()->lida);
     }
+
+    /**
+     * Teste 3: Resposta do técnico gera notificação para o dono do chamado.
+     */
+    public function test_resposta_tecnico_gera_notificacao_para_usuario()
+    {
+        $usuario = User::factory()->usuario()->create();
+        $tecnico = User::factory()->tecnico()->create();
+
+        $ordemServico = OrdemServico::create([
+            'titulo' => 'Impressora com defeito',
+            'descricao' => 'Não imprime',
+            'status_id' => 1,
+            'categoria_id' => 1,
+            'urgencia_id' => 1,
+            'prioridade_id' => 1,
+            'usuario_id' => $usuario->id,
+            'tecnico_id' => $tecnico->id,
+            'localizacao' => 'Bloco B',
+            'ativo' => true
+        ]);
+
+        $tokenTecnico = JWTAuth::fromUser($tecnico);
+
+        $response = $this->withHeader('Authorization', "Bearer {$tokenTecnico}")
+            ->postJson("/api/ordens/{$ordemServico->id}/comentarios", [
+                'conteudo' => 'Estamos analisando o problema.',
+            ]);
+
+        $response->assertCreated();
+
+        $this->assertDatabaseHas('gestoes.notificacoes', [
+            'usuario_id' => $usuario->id,
+            'ordem_servico_id' => $ordemServico->id,
+            'titulo' => 'Nova mensagem no chamado',
+            'lida' => false
+        ]);
+    }
+
+    /**
+     * Teste 4: Mensagem do usuário gera notificação para o técnico atribuído.
+     */
+    public function test_mensagem_usuario_gera_notificacao_para_tecnico()
+    {
+        $usuario = User::factory()->usuario()->create();
+        $tecnico = User::factory()->tecnico()->create();
+
+        $ordemServico = OrdemServico::create([
+            'titulo' => 'Rede lenta',
+            'descricao' => 'Internet muito lenta',
+            'status_id' => 1,
+            'categoria_id' => 1,
+            'urgencia_id' => 1,
+            'prioridade_id' => 1,
+            'usuario_id' => $usuario->id,
+            'tecnico_id' => $tecnico->id,
+            'localizacao' => 'Bloco C',
+            'ativo' => true
+        ]);
+
+        $tokenUsuario = JWTAuth::fromUser($usuario);
+
+        $response = $this->withHeader('Authorization', "Bearer {$tokenUsuario}")
+            ->postJson("/api/ordens/{$ordemServico->id}/comentarios", [
+                'conteudo' => 'O problema continua acontecendo.',
+            ]);
+
+        $response->assertCreated();
+
+        $this->assertDatabaseHas('gestoes.notificacoes', [
+            'usuario_id' => $tecnico->id,
+            'ordem_servico_id' => $ordemServico->id,
+            'titulo' => 'Nova mensagem no chamado',
+            'lida' => false
+        ]);
+    }
 }

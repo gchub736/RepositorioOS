@@ -21,6 +21,7 @@ class Notificacao extends Model
 
     protected $casts = [
         'lida' => 'boolean',
+        'criado_em' => 'datetime',
     ];
 
     // Relação com o Usuário (Técnico)
