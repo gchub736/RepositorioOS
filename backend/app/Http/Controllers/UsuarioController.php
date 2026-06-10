@@ -62,7 +62,7 @@ class UsuarioController extends Controller
             new OA\Parameter(
                 name: "busca",
                 in: "query",
-                description: "Busca global (nome, email ou cpf)",
+                description: "Busca global (nome ou cpf)",
                 required: false,
                 schema: new OA\Schema(type: "string")
             ),
@@ -137,12 +137,11 @@ class UsuarioController extends Controller
         }
     }
 
-    // Busca Global (Nome, E-mail ou CPF)
+    // Busca Global (Nome ou CPF)
     if ($request->filled('busca')) {
         $query->where(function ($q) use ($request) {
             $busca = '%' . $request->busca . '%';
             $q->where('nome', 'ilike', $busca)
-              ->orWhere('email', 'ilike', $busca)
               ->orWhere('cpf', 'like', $request->busca . '%');
         });
     }

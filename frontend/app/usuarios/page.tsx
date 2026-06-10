@@ -9,6 +9,7 @@ export default function UsuariosPage() {
     const [paginaAtual, setPaginaAtual] = useState(1);
     const [totalPaginas, setTotalPaginas] = useState(1);
     const [filtroId, setFiltroId] = useState('');
+    const [filtroBusca, setFiltroBusca] = useState('');
     const [itensPorPagina, setItensPorPagina] = useState(15);
     const [carregando, setCarregando] = useState(true);
 
@@ -19,6 +20,7 @@ export default function UsuariosPage() {
         setCarregando(true);
         const params = new URLSearchParams({ page: paginaAtual.toString(), per_page: itensPorPagina.toString() });
         if (filtroId) params.append('id', filtroId);
+        if (filtroBusca) params.append('busca', filtroBusca);
 
         api.get(`/usuarios?${params.toString()}`)
             .then((res) => {
@@ -79,17 +81,24 @@ export default function UsuariosPage() {
             </h1>
 
             {/* Nova barra de Filtros */}
-            <div className="mb-6 flex gap-4">
+            <div className="mb-6 flex flex-wrap gap-4">
                 <input
                     type="number"
                     placeholder="Filtrar por ID"
                     value={filtroId}
                     onChange={(e) => setFiltroId(e.target.value)}
-                    className="p-2 border rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                    className="p-2 border rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white w-full sm:w-32"
+                />
+                <input
+                    type="text"
+                    placeholder="Buscar por Nome ou CPF"
+                    value={filtroBusca}
+                    onChange={(e) => setFiltroBusca(e.target.value)}
+                    className="p-2 border rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white flex-1 min-w-[200px]"
                 />
                 <button
                     onClick={() => { setPaginaAtual(1); buscarUsuarios(); }}
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors w-full sm:w-auto"
                 >
                     Buscar
                 </button>
