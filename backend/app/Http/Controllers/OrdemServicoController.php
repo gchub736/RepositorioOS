@@ -47,6 +47,13 @@ class OrdemServicoController extends Controller
                 description: "Filtrar por ID numérico ou código de rastreio (UUID)",
                 required: false,
                 schema: new OA\Schema(type: "string") 
+            ),
+            new OA\Parameter(
+                name: "sla",
+                in: "query",
+                description: "Filtrar por status do SLA (ok, alerta, vencido, pausado)",
+                required: false,
+                schema: new OA\Schema(type: "string", enum: ["ok", "alerta", "vencido", "pausado"])
             )
         ],
         responses: [
@@ -118,6 +125,41 @@ class OrdemServicoController extends Controller
             $query->whereHas('prioridade', fn($q) =>
                 $q->where('nome', $request->prioridade)
             );
+        }
+
+        if ($request->filled('sla')) {
+            $slaFilter = strtolower($request->sla); // 'ok', 'alerta', 'vencido', 'pausado'
+            
+            if ($slaFilter === 'pausado') {
+                $query->whereHas('status', fn($q) => $q->whereIn('nome', ['Pausado', 'Aguardando Peça']));
+            } else {
+                $query->whereHas('status', fn($q) => $q->whereNotIn('nome', ['Fechado', 'Cancelado', 'Pausado', 'Aguardando Peça']));
+                
+                $limitesSla = \App\Models\Configuracao::slaLimites();
+                $urgencias = \App\Models\Urgencia::all()->keyBy('nome');
+                
+                $query->where(function ($q) use ($slaFilter, $limitesSla, $urgencias) {
+                    foreach ($limitesSla as $urgenciaNome => $limiteHoras) {
+                        if (!isset($urgencias[$urgenciaNome])) continue;
+                        $urgenciaId = $urgencias[$urgenciaNome]->id;
+                        $limiteMinutos = $limiteHoras * 60;
+                        
+                        $q->orWhere(function ($sub) use ($urgenciaId, $limiteMinutos, $slaFilter) {
+                            $sub->where('urgencia_id', $urgenciaId);
+                            $minutosReaisSql = "(EXTRACT(EPOCH FROM (NOW() - criado_em)) / 60) - COALESCE(tempo_pausado_minutos, 0)";
+                            
+                            if ($slaFilter === 'vencido') {
+                                $sub->whereRaw("$minutosReaisSql >= ?", [$limiteMinutos]);
+                            } elseif ($slaFilter === 'alerta') {
+                                $sub->whereRaw("$minutosReaisSql >= ?", [$limiteMinutos * 0.75])
+                                    ->whereRaw("$minutosReaisSql < ?", [$limiteMinutos]);
+                            } elseif ($slaFilter === 'ok') {
+                                $sub->whereRaw("$minutosReaisSql < ?", [$limiteMinutos * 0.75]);
+                            }
+                        });
+                    }
+                });
+            }
         }
 
         $user = $request->user();

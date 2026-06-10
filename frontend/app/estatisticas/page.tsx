@@ -27,7 +27,7 @@ export default function Estatisticas() {
   if (erro) return <div className="p-8 text-red-500 font-bold bg-red-50 min-h-screen flex items-center justify-center">{erro}</div>;
   if (!dados || !mounted) return <div className="p-8 text-slate-500 font-bold min-h-screen flex items-center justify-center">Carregando métricas...</div>;
 
-  const { geral, top_tecnicos, categorias } = dados;
+  const { geral, top_tecnicos, categorias, sla, prioridades } = dados;
 
   const dataGrafico = (categorias || []).map((cat: any) => ({
     name: cat.categoria,
@@ -43,8 +43,7 @@ export default function Estatisticas() {
 
   const card = "bg-white dark:bg-slate-900 p-3 md:p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col";
 
-  // Previne divisão por zero
-  const totalGeralComLixo = geral.total + geral.excluidos;
+  // Removido o cálculo de inativos
 
   return (
     <div className="p-3 md:p-4 bg-slate-50 dark:bg-slate-950 h-full flex flex-col overflow-hidden">
@@ -75,18 +74,7 @@ export default function Estatisticas() {
               </div>
             </div>
 
-            {/* LIXEIRA AQUI */}
-            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 mt-1">
-              <div className="flex justify-between text-[10px] md:text-xs font-bold mb-1">
-                <span className="text-slate-600 dark:text-slate-300 flex items-center gap-1">
-                  INATIVOS
-                </span>
-                <span className="text-red-600 dark:text-red-400">{geral.excluidos}</span>
-              </div>
-              <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                <div className="bg-red-500 h-full transition-all duration-1000" style={{ width: `${totalGeralComLixo > 0 ? (geral.excluidos / totalGeralComLixo) * 100 : 0}%` }}></div>
-              </div>
-            </div>
+
 
             {geral.sem_tecnico > 0 && (
               <div className="mt-2 flex items-center gap-2 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400 px-3 py-2 rounded-lg">
@@ -117,10 +105,23 @@ export default function Estatisticas() {
           </div>
         </div>
 
-        {/* CARD 3: TOTAL */}
-        <div className="bg-blue-600 p-3 md:p-4 rounded-2xl shadow-lg shadow-blue-500/20 flex flex-col justify-center items-center text-white">
-          <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] mb-1 opacity-80 text-center">Total de Incidentes (Ativos)</span>
-          <span className="text-4xl md:text-6xl font-black">{geral.total}</span>
+        {/* CARD 3: SAÚDE DO SLA */}
+        <div className={card}>
+          <h3 className="text-[10px] md:text-xs font-bold text-slate-400 uppercase mb-3 tracking-widest">Saúde do SLA (Ativos)</h3>
+          <div className="grid grid-cols-3 gap-2 flex-1">
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-2 flex flex-col justify-center items-center text-center shadow-sm">
+              <span className="text-green-600 dark:text-green-400 text-[9px] font-bold uppercase mb-1">No Prazo</span>
+              <span className="text-2xl md:text-3xl font-black text-green-700 dark:text-green-300">{sla?.ok || 0}</span>
+            </div>
+            <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-2 flex flex-col justify-center items-center text-center shadow-sm">
+              <span className="text-orange-600 dark:text-orange-400 text-[9px] font-bold uppercase mb-1">Alerta</span>
+              <span className="text-2xl md:text-3xl font-black text-orange-700 dark:text-orange-300">{sla?.alerta || 0}</span>
+            </div>
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-2 flex flex-col justify-center items-center text-center shadow-sm">
+              <span className="text-red-600 dark:text-red-400 text-[9px] font-bold uppercase mb-1">Vencido</span>
+              <span className="text-2xl md:text-3xl font-black text-red-700 dark:text-red-300">{sla?.vencido || 0}</span>
+            </div>
+          </div>
         </div>
 
         {/* CARD 4: EFICIÊNCIA */}
@@ -135,37 +136,43 @@ export default function Estatisticas() {
           </p>
         </div>
 
-        {/* CARD 5: POR CATEGORIA */}
+        {/* CARD 5: POR PRIORIDADE E CATEGORIA */}
         <div className={`${card} md:col-span-2`}>
-          <h3 className="text-[10px] md:text-xs font-bold text-slate-400 uppercase mb-4 tracking-widest">Chamados por Categoria</h3>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center flex-1">
-            {/* Barras de progresso à esquerda */}
-            <div className="space-y-4">
-              {categorias.map((cat: any) => (
-                <div key={cat.categoria} className="space-y-1 md:space-y-2">
-                  <div className="flex justify-between text-[10px] md:text-xs font-bold">
-                    <span className="text-slate-600 dark:text-slate-300">{cat.categoria}</span>
-                    <span className="text-slate-400 font-bold">{cat.total} total</span>
-                  </div>
-                  <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 md:h-3 rounded-full overflow-hidden">
-                    <div
-                      className={`${catCor[cat.categoria] || 'bg-gray-500'} h-full transition-all duration-1000`}
-                      style={{ width: `${geral.total > 0 ? (cat.total / geral.total) * 100 : 0}%` }}
-                    ></div>
-                  </div>
-                  <div className="text-[9px] md:text-[10px] text-slate-400">
-                    {cat.abertos} em aberto • {Math.max(0, cat.total - cat.abertos)} resolvidos
-                  </div>
-                </div>
-              ))}
-              {categorias.length === 0 && (
-                <p className="text-[10px] md:text-xs text-slate-400 italic">Nenhuma categoria registrada.</p>
-              )}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start flex-1">
+            
+            {/* Prioridades à esquerda */}
+            <div className="flex flex-col h-full w-full">
+              <h3 className="text-[10px] md:text-xs font-bold text-slate-400 uppercase mb-4 tracking-widest">Abertos por Prioridade</h3>
+              <div className="space-y-3">
+                {prioridades && prioridades.length > 0 ? prioridades.map((p: any, i: number) => {
+                  const cores: any = {
+                    'Baixa': 'bg-slate-400',
+                    'Media': 'bg-blue-500',
+                    'Alta': 'bg-orange-500',
+                    'Muito Alta': 'bg-red-600',
+                    'Critica': 'bg-red-800'
+                  };
+                  return (
+                    <div key={i} className="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-2 rounded border border-slate-100 dark:border-slate-800">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded-full ${cores[p.prioridade] || 'bg-slate-400'}`}></div>
+                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">{p.prioridade}</span>
+                      </div>
+                      <span className="text-xs font-black text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900 px-2 py-1 rounded shadow-sm border border-slate-200 dark:border-slate-700">
+                        {p.abertos}
+                      </span>
+                    </div>
+                  );
+                }) : (
+                  <p className="text-[10px] md:text-xs text-slate-400 italic">Nenhum chamado em aberto com prioridade classificada.</p>
+                )}
+              </div>
             </div>
 
-            {/* Gráfico do Recharts à direita */}
-            <div className="h-40 md:h-48 w-full mt-2 lg:mt-0">
+            {/* Gráfico do Recharts à direita (Categorias) */}
+            <div className="flex flex-col h-full w-full mt-2 lg:mt-0">
+              <h3 className="text-[10px] md:text-xs font-bold text-slate-400 uppercase mb-4 tracking-widest">Chamados por Categoria</h3>
+              <div className="h-40 md:h-48 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={dataGrafico} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <XAxis dataKey="name" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
@@ -188,7 +195,7 @@ export default function Estatisticas() {
             </div>
           </div>
         </div>
-
+        </div>
       </div>
     </div>
   );

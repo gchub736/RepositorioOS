@@ -98,7 +98,76 @@
                 "operationId": "280207991833169165fa89055b977585",
                 "responses": {
                     "200": {
-                        "description": "Estatísticas geradas com sucesso"
+                        "description": "Estatísticas geradas com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "geral": {
+                                                    "properties": {
+                                                        "total": {
+                                                            "type": "integer"
+                                                        },
+                                                        "resolvidos": {
+                                                            "type": "integer"
+                                                        },
+                                                        "abertos": {
+                                                            "type": "integer"
+                                                        },
+                                                        "sem_tecnico": {
+                                                            "type": "integer"
+                                                        },
+                                                        "perc_resolvidos": {
+                                                            "type": "number"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "sla": {
+                                                    "properties": {
+                                                        "ok": {
+                                                            "type": "integer"
+                                                        },
+                                                        "alerta": {
+                                                            "type": "integer"
+                                                        },
+                                                        "vencido": {
+                                                            "type": "integer"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "top_tecnicos": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "categorias": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "prioridades": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "403": {
                         "description": "Acesso negado"
@@ -236,6 +305,21 @@
                         "required": false,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sla",
+                        "in": "query",
+                        "description": "Filtrar por status do SLA (ok, alerta, vencido, pausado)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ok",
+                                "alerta",
+                                "vencido",
+                                "pausado"
+                            ]
                         }
                     }
                 ],
@@ -958,7 +1042,7 @@
                     {
                         "name": "busca",
                         "in": "query",
-                        "description": "Busca global (nome, email ou cpf)",
+                        "description": "Busca global (nome ou cpf)",
                         "required": false,
                         "schema": {
                             "type": "string"

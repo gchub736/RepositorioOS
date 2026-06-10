@@ -117,6 +117,7 @@ export default function ListaChamados() {
     categoria: "",
     urgencia: "",
     prioridade: "",
+    sla: "",
     page: 1,
     per_page: 15
   });
@@ -257,6 +258,7 @@ export default function ListaChamados() {
       if (filtros.categoria) params.categoria = filtros.categoria;
       if (filtros.urgencia) params.urgencia = filtros.urgencia;
       if (filtros.prioridade) params.prioridade = filtros.prioridade;
+      if (filtros.sla) params.sla = filtros.sla;
 
       // Se for técnico, a API do Laravel vai filtrar apenas os chamados dele
       if (currentCargo === "Tecnico" && currentUserId) {
@@ -768,6 +770,15 @@ export default function ListaChamados() {
               {statusList.map((s: any) => (
                 <option key={s.id} value={s.nome}>{s.nome}</option>
               ))}
+            </select>
+          )}
+          {cargo !== "Usuario" && (
+            <select value={filtros.sla} onChange={(e) => setFiltros({ ...filtros, sla: e.target.value, page: 1 })} className={filterClass}>
+              <option value="">Todos os SLAs</option>
+              <option value="ok">🟢 No Prazo</option>
+              <option value="alerta">🟡 Em Alerta</option>
+              <option value="vencido">🔴 Vencido</option>
+              <option value="pausado">⏸️ Pausado</option>
             </select>
           )}
           <select value={filtros.categoria} onChange={(e) => setFiltros({ ...filtros, categoria: e.target.value, page: 1 })} className={filterClass}>

@@ -16,7 +16,44 @@ class DashboardController extends Controller
         description: "Acesso restrito: Apenas usuários com permissão 'dashboard.visualizar' ou cargo Admin.",
         security: [["bearerAuth" => []]],
         responses: [
-            new OA\Response(response: 200, description: "Estatísticas geradas com sucesso"),
+            new OA\Response(
+                response: 200, 
+                description: "Estatísticas geradas com sucesso",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: "data",
+                            type: "object",
+                            properties: [
+                                new OA\Property(
+                                    property: "geral",
+                                    type: "object",
+                                    properties: [
+                                        new OA\Property(property: "total", type: "integer"),
+                                        new OA\Property(property: "resolvidos", type: "integer"),
+                                        new OA\Property(property: "abertos", type: "integer"),
+                                        new OA\Property(property: "sem_tecnico", type: "integer"),
+                                        new OA\Property(property: "perc_resolvidos", type: "number")
+                                    ]
+                                ),
+                                new OA\Property(
+                                    property: "sla",
+                                    type: "object",
+                                    properties: [
+                                        new OA\Property(property: "ok", type: "integer"),
+                                        new OA\Property(property: "alerta", type: "integer"),
+                                        new OA\Property(property: "vencido", type: "integer")
+                                    ]
+                                ),
+                                new OA\Property(property: "top_tecnicos", type: "array", items: new OA\Items(type: "object")),
+                                new OA\Property(property: "categorias", type: "array", items: new OA\Items(type: "object")),
+                                new OA\Property(property: "prioridades", type: "array", items: new OA\Items(type: "object"))
+                            ]
+                        ),
+                        new OA\Property(property: "message", type: "string")
+                    ]
+                )
+            ),
             new OA\Response(response: 403, description: "Acesso negado")
         ]
     )]
@@ -24,7 +61,6 @@ class DashboardController extends Controller
     {
         // Totais base
         $totalAtivos = OrdemServico::where('ativo', true)->count();
-        $excluidos = OrdemServico::where('ativo', false)->count();
 
         // Filtros baseados nos relacionamentos de status
         $resolvidos = OrdemServico::where('ativo', true)
@@ -57,8 +93,8 @@ class DashboardController extends Controller
             ]);
 
        $categorias = DB::table('ordem_servicos as os')
-    ->join('categoria as c', 'os.categoria_id', '=', 'c.id')
-    ->join('status as s', 'os.status_id', '=', 's.id')
+            ->join('categoria as c', 'os.categoria_id', '=', 'c.id')
+            ->join('status as s', 'os.status_id', '=', 's.id')
             ->select(
                 'c.nome as categoria',
                 DB::raw('count(*) as total'),
@@ -68,18 +104,45 @@ class DashboardController extends Controller
             ->groupBy('c.nome')
             ->get();
 
+        $prioridades = DB::table('ordem_servicos as os')
+            ->join('prioridade as p', 'os.prioridade_id', '=', 'p.id')
+            ->join('status as s', 'os.status_id', '=', 's.id')
+            ->select(
+                'p.nome as prioridade',
+                DB::raw("SUM(CASE WHEN s.nome != 'Fechado' THEN 1 ELSE 0 END) as abertos")
+            )
+            ->where('os.ativo', true)
+            ->where('s.nome', '!=', 'Fechado')
+            ->groupBy('p.nome')
+            ->get();
+
+        // Calculo de Saúde do SLA
+        $abertosSla = OrdemServico::with(['status', 'urgencia'])
+            ->where('ativo', true)
+            ->whereHas('status', fn($q) => $q->whereNotIn('nome', ['Fechado', 'Cancelado']))
+            ->get();
+
+        $slaStats = ['ok' => 0, 'alerta' => 0, 'vencido' => 0];
+        foreach ($abertosSla as $os) {
+            $statusSla = $os->status_sla;
+            if (isset($slaStats[$statusSla])) {
+                $slaStats[$statusSla]++;
+            }
+        }
+
         return response()->json([
             'data' => [
                 'geral' => [
                     'total' => $totalAtivos,
-                    'excluidos' => $excluidos,
                     'resolvidos' => $resolvidos,
                     'abertos' => $abertos,
                     'sem_tecnico' => $semTecnico,
                     'perc_resolvidos' => $totalAtivos > 0 ? round(($resolvidos / $totalAtivos) * 100, 2) : 0,
                 ],
+                'sla' => $slaStats,
                 'top_tecnicos' => $topTecnicos,
-                'categorias' => $categorias
+                'categorias' => $categorias,
+                'prioridades' => $prioridades
             ],
             'message' => 'Estatísticas recuperadas com sucesso'
         ]);
