@@ -1303,7 +1303,7 @@
                 "tags": [
                     "System"
                 ],
-                "summary": "Healthcheck da API",
+                "summary": "Healthcheck do Banco de Dados",
                 "operationId": "56a9a406761b58a0252733e6597bcce8",
                 "responses": {
                     "200": {

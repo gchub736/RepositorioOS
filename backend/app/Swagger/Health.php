@@ -16,7 +16,7 @@ use OpenApi\Attributes as OA;
 #[OA\Get(
     path: "/api/health",
     tags: ["System"],
-    summary: "Healthcheck da API",
+    summary: "Healthcheck do Banco de Dados",
     responses: [
         new OA\Response(response: 200, description: "Serviço e DB conectados"),
         new OA\Response(response: 500, description: "Erro no healthcheck")
