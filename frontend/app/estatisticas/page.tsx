@@ -146,11 +146,11 @@ export default function Estatisticas() {
               <div className="space-y-3">
                 {prioridades && prioridades.length > 0 ? prioridades.map((p: any, i: number) => {
                   const cores: any = {
-                    'Baixa': 'bg-slate-400',
-                    'Media': 'bg-blue-500',
-                    'Alta': 'bg-orange-500',
-                    'Muito Alta': 'bg-red-600',
-                    'Critica': 'bg-red-800'
+                    'Baixa': 'bg-blue-500',
+                    'Media': 'bg-orange-500',
+                    'Alta': 'bg-red-500',
+                    'Muito Alta': 'bg-red-700',
+                    'Critica': 'bg-red-900'
                   };
                   return (
                     <div key={i} className="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-2 rounded border border-slate-100 dark:border-slate-800">

@@ -113,7 +113,8 @@ class DashboardController extends Controller
             )
             ->where('os.ativo', true)
             ->where('s.nome', '!=', 'Fechado')
-            ->groupBy('p.nome')
+            ->groupBy('p.id', 'p.nome')
+            ->orderBy('p.id', 'desc')
             ->get();
 
         // Calculo de Saúde do SLA
