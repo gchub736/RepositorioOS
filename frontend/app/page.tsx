@@ -76,9 +76,9 @@ const renderSlaInfo = (os: any) => {
       <div className="flex justify-between items-center">
         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Controle de SLA</span>
         <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded ${statusSla === "vencido" ? "bg-red-100 text-red-700" :
-            statusSla === "alerta" ? "bg-yellow-100 text-yellow-700" :
-              statusSla === "pausado" ? "bg-indigo-100 text-indigo-700" :
-                "bg-green-100 text-green-700"
+          statusSla === "alerta" ? "bg-yellow-100 text-yellow-700" :
+            statusSla === "pausado" ? "bg-indigo-100 text-indigo-700" :
+              "bg-green-100 text-green-700"
           }`}>
           {statusSla === "vencido" ? "Vencido" :
             statusSla === "alerta" ? "Em Alerta" :
@@ -608,8 +608,8 @@ export default function ListaChamados() {
               ) : (
                 <>
                   <div className={`p-3 rounded-2xl text-xs leading-relaxed group relative ${isMe
-                      ? "bg-blue-600 text-white rounded-tr-none"
-                      : "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-tl-none border border-slate-200/50 dark:border-slate-700/50"
+                    ? "bg-blue-600 text-white rounded-tr-none"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-tl-none border border-slate-200/50 dark:border-slate-700/50"
                     }`}>
                     {c.parent && (
                       <div className={`mb-2 p-2 rounded-lg text-[10px] opacity-90 border-l-2 bg-black/10 dark:bg-white/10 ${isMe ? "border-blue-200" : "border-slate-400"}`}>
@@ -1274,8 +1274,8 @@ export default function ListaChamados() {
                           type="button"
                           onClick={() => setAbaModal("comentarios")}
                           className={`pb-2 text-xs font-black uppercase tracking-wider transition-colors relative ${abaModal === "comentarios"
-                              ? "text-blue-600 dark:text-blue-400"
-                              : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                            ? "text-blue-600 dark:text-blue-400"
+                            : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                             }`}
                         >
                           Discussão ({chamadoSelecionado.comentarios?.length || 0})
@@ -1287,8 +1287,8 @@ export default function ListaChamados() {
                           type="button"
                           onClick={() => setAbaModal("historico")}
                           className={`pb-2 text-xs font-black uppercase tracking-wider transition-colors relative ${abaModal === "historico"
-                              ? "text-blue-600 dark:text-blue-400"
-                              : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                            ? "text-blue-600 dark:text-blue-400"
+                            : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                             }`}
                         >
                           Histórico ({chamadoSelecionado.historicos?.length || 0})

@@ -31,14 +31,14 @@ export default function NovoChamado() {
         }
         return;
       }
-    } catch {}
+    } catch { }
 
     api.get('/categorias')
       .then((res) => {
         setListaCategorias(res.data);
         try {
           sessionStorage.setItem("aux_categorias", JSON.stringify(res.data));
-        } catch {}
+        } catch { }
         if (res.data.length > 0) {
           setCategoria(res.data[0].nome);
         }
@@ -84,7 +84,7 @@ export default function NovoChamado() {
       } else if (err.response?.data?.error) {
         errorMessage = err.response.data.error;
       }
-      
+
       alert("Falha ao registrar chamado:\n" + errorMessage);
     } finally {
       setIsSubmitting(false);

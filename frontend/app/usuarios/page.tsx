@@ -219,7 +219,7 @@ export default function UsuariosPage() {
                     >
                         Anterior
                     </button>
-                    
+
                     <Paginacao
                         currentPage={paginaAtual}
                         lastPage={totalPaginas}
