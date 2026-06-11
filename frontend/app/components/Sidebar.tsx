@@ -95,19 +95,27 @@ export default function Sidebar() {
         router.push('/login');
       });
 
-    // Carrega notificações e inicia polling
+    setInitialized(true);
+  }, [pathname, initialized]);
+
+  // 3. Notificações Polling e Eventos (Separado da inicialização para não ser limpo prematuramente)
+  useEffect(() => {
+    if (pathname === '/login') return;
+
     fetchNotificacoes();
     const interval = setInterval(fetchNotificacoes, 30000);
-    const handleAtualizarNotificacoes = () => fetchNotificacoes();
-    window.addEventListener('notificacoes:atualizar', handleAtualizarNotificacoes);
     
-    setInitialized(true);
+    const handleAtualizarNotificacoes = () => {
+      fetchNotificacoes();
+    };
+    
+    window.addEventListener('notificacoes:atualizar', handleAtualizarNotificacoes);
 
     return () => {
       clearInterval(interval);
       window.removeEventListener('notificacoes:atualizar', handleAtualizarNotificacoes);
     };
-  }, [pathname, initialized]);
+  }, [pathname]);
 
   // 2. Proteção de rotas instantânea por pathname (Zero chamadas de rede no clique)
   useEffect(() => {

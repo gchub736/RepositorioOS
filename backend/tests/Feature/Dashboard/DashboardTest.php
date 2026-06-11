@@ -35,7 +35,6 @@ class DashboardTest extends TestCase
             'data' => [
                 'geral' => [
                     'total',
-                    'excluidos',
                     'resolvidos',
                     'abertos',
                     'sem_tecnico',
