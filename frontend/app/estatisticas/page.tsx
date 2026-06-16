@@ -22,7 +22,7 @@ export default function Estatisticas() {
         }
         console.error(err);
       });
-  }, []);
+  }, []); // [] = execute apenas uma vez
 
   if (erro) return <div className="p-8 text-red-500 font-bold bg-red-50 min-h-screen flex items-center justify-center">{erro}</div>;
   if (!dados || !mounted) return <div className="p-8 text-slate-500 font-bold min-h-screen flex items-center justify-center">Carregando métricas...</div>;
@@ -32,10 +32,10 @@ export default function Estatisticas() {
   const dataGrafico = (categorias || []).map((cat: any) => ({
     name: cat.categoria,
     "Em Aberto": cat.abertos,
-    "Resolvidos": Math.max(0, cat.total - cat.abertos),
+    "Resolvidos": cat.resolvidos, // vem direto do backend
   }));
 
-  const catCor: any = {
+  const catCor: any = { //dicionario de cores
     'Rede': 'bg-purple-500',
     'Infraestrutura': 'bg-cyan-500',
     'Acesso': 'bg-green-500',
@@ -45,10 +45,9 @@ export default function Estatisticas() {
 
   // Removido o cálculo de inativos
 
-  return (
+  return ( //comeco do tailwind css
     <div className="p-3 md:p-4 bg-slate-50 dark:bg-slate-950 h-full flex flex-col overflow-hidden">
       <h2 className="text-lg md:text-xl font-black text-slate-800 dark:text-white uppercase tracking-tighter mb-3">Estatísticas do Sistema</h2>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-2">
 
         {/* CARD 1: STATUS GERAL */}
@@ -139,7 +138,7 @@ export default function Estatisticas() {
         {/* CARD 5: POR PRIORIDADE E CATEGORIA */}
         <div className={`${card} md:col-span-2`}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start flex-1">
-            
+
             {/* Prioridades à esquerda */}
             <div className="flex flex-col h-full w-full">
               <h3 className="text-[10px] md:text-xs font-bold text-slate-400 uppercase mb-4 tracking-widest">Abertos por Prioridade</h3>
@@ -173,28 +172,28 @@ export default function Estatisticas() {
             <div className="flex flex-col h-full w-full mt-2 lg:mt-0">
               <h3 className="text-[10px] md:text-xs font-bold text-slate-400 uppercase mb-4 tracking-widest">Chamados por Categoria</h3>
               <div className="h-40 md:h-48 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={dataGrafico} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <XAxis dataKey="name" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: 'rgba(15, 23, 42, 0.95)',
-                      border: '1px solid rgba(51, 65, 85, 0.5)',
-                      borderRadius: '12px',
-                      color: '#f8fafc',
-                      fontSize: '11px',
-                    }}
-                    itemStyle={{ color: '#f8fafc' }}
-                  />
-                  <Legend verticalAlign="top" height={32} iconType="circle" iconSize={6} wrapperStyle={{ fontSize: '10px' }} />
-                  <Bar dataKey="Em Aberto" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Em Aberto" />
-                  <Bar dataKey="Resolvidos" fill="#10b981" radius={[4, 4, 0, 0]} name="Resolvidos" />
-                </BarChart>
-              </ResponsiveContainer>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={dataGrafico} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <XAxis dataKey="name" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        border: '1px solid rgba(51, 65, 85, 0.5)',
+                        borderRadius: '12px',
+                        color: '#f8fafc',
+                        fontSize: '11px',
+                      }}
+                      itemStyle={{ color: '#f8fafc' }}
+                    />
+                    <Legend verticalAlign="top" height={32} iconType="circle" iconSize={6} wrapperStyle={{ fontSize: '10px' }} />
+                    <Bar dataKey="Em Aberto" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Em Aberto" />
+                    <Bar dataKey="Resolvidos" fill="#10b981" radius={[4, 4, 0, 0]} name="Resolvidos" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </div>
     </div>

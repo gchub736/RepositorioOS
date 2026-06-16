@@ -98,7 +98,8 @@ class DashboardController extends Controller
             ->select(
                 'c.nome as categoria',
                 DB::raw('count(*) as total'),
-                DB::raw("SUM(CASE WHEN s.nome != 'Fechado' THEN 1 ELSE 0 END) as abertos")
+                DB::raw("SUM(CASE WHEN s.nome != 'Fechado' THEN 1 ELSE 0 END) as abertos"),
+                DB::raw("SUM(CASE WHEN s.nome = 'Fechado' THEN 1 ELSE 0 END) as resolvidos")
             )
             ->where('os.ativo', true)
             ->groupBy('c.nome')
