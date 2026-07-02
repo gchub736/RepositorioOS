@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { ClipboardList, UserPlus, Users, BarChart3, Settings, LogOut, Sun, Moon, ChevronLeft, Menu, Bell } from 'lucide-react';
-import api from '../services/api'; // Certifique-se de que o caminho está correto
+import api from '../services/api';
 
 export default function Sidebar() {
   const [cargo, setCargo] = useState('');
@@ -21,13 +21,12 @@ export default function Sidebar() {
     function handleClickOutside(event: MouseEvent) {
       if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
         const target = event.target as Element;
-        // Não fecha se o clique foi no próprio botão de abrir notificações
         if (!target.closest('#btn-notificacoes')) {
           setShowNotificacoes(false);
         }
       }
     }
-    
+
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         setShowNotificacoes(false);
@@ -104,11 +103,11 @@ export default function Sidebar() {
 
     fetchNotificacoes();
     const interval = setInterval(fetchNotificacoes, 30000);
-    
+
     const handleAtualizarNotificacoes = () => {
       fetchNotificacoes();
     };
-    
+
     window.addEventListener('notificacoes:atualizar', handleAtualizarNotificacoes);
 
     return () => {
@@ -173,9 +172,9 @@ export default function Sidebar() {
 
   const logout = async () => {
     try {
-        await api.post('/logout'); // Usando sua instância da API que já tem o token
+      await api.post('/logout');
     } catch (e) {
-        console.error('Erro ao fazer logout:', e);
+      console.error('Erro ao fazer logout:', e);
     }
     sessionStorage.clear();
     router.push('/login');
@@ -185,161 +184,225 @@ export default function Sidebar() {
 
   const unreadCount = notificacoes.filter((n: any) => !n.lida).length;
 
-  const linkClass = "flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all font-medium text-slate-600 dark:text-slate-300";
-  const activeClass = "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400";
+  // ============================================================
+  //  DESIGN INSTITUCIONAL - SIDEBAR POR CAMADAS
+  // ============================================================
+
+  const navItems = [
+    { href: '/novo', icon: UserPlus, label: 'Criar Chamado', roles: ['Admin', 'Tecnico', 'Usuario'] },
+    { href: '/', icon: ClipboardList, label: 'Chamados', roles: ['Admin', 'Tecnico', 'Usuario'] },
+    { href: '/usuarios', icon: Users, label: 'Usuários', roles: ['Admin'] },
+    { href: '/estatisticas', icon: BarChart3, label: 'Estatísticas', roles: ['Admin'] },
+    { href: '/configuracoes', icon: Settings, label: 'Configurações', roles: ['Admin', 'Tecnico', 'Usuario'] },
+  ];
+
+  const isActive = (href: string) => pathname === href;
 
   return (
-    <aside className={`${isCollapsed ? 'w-20' : 'w-64'} transition-all duration-300 flex-shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col h-full shadow-sm relative z-20`}>
-      <div className={`flex flex-col ${isCollapsed ? 'p-4 items-center gap-4' : 'p-6'}`}>
-        {!isCollapsed ? (
-          <>
-            <div className="flex items-center justify-between gap-2">
-              <h1 className="text-xl font-black tracking-tighter text-blue-600 dark:text-blue-400 uppercase leading-tight">
-                {nomeSistema}
-              </h1>
-              <div className="flex items-center gap-1 flex-shrink-0 relative">
-                {/* Botão de Notificações */}
-                <button 
-                  id="btn-notificacoes"
-                  onClick={() => setShowNotificacoes(!showNotificacoes)} 
-                  className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative text-slate-500 hover:text-blue-600 dark:hover:text-blue-400" 
-                  title="Notificações"
-                >
-                  <Bell size={18} />
-                  {unreadCount > 0 && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                  )}
-                </button>
-                <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Alternar Tema">
-                  {theme === 'light' ? <Moon size={18} /> : <Sun className="text-yellow-400" size={18} />}
-                </button>
-                <button onClick={toggleSidebar} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-400 hover:text-blue-600 dark:hover:text-blue-400" title="Recolher Menu">
-                  <ChevronLeft size={18} />
-                </button>
-              </div>
-            </div>
-            <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-2 uppercase font-bold tracking-widest line-clamp-3">
-              <span className="text-black-500">{nome}</span> <span className="text-blue-500">{cargo}</span>
-            </p>
-          </>
-        ) : (
-          <>
-            <span className="font-black text-blue-600 dark:text-blue-400 text-xl mb-2" title={nomeSistema}>OS</span>
-            <button onClick={toggleSidebar} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-400 hover:text-blue-600 dark:hover:text-blue-400" title="Expandir Menu">
-              <Menu size={20} />
-            </button>
-            <button 
-              id="btn-notificacoes"
-              onClick={() => setShowNotificacoes(!showNotificacoes)} 
-              className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative text-slate-500 hover:text-blue-600 dark:hover:text-blue-400" 
-              title="Notificações"
-            >
-              <Bell size={18} />
-              {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-              )}
-            </button>
-            <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Alternar Tema">
-              {theme === 'light' ? <Moon size={18} /> : <Sun className="text-yellow-400" size={18} />}
-            </button>
-          </>
-        )}
-      </div>
+    <aside
+      className={`${isCollapsed ? 'w-14' : 'w-[220px]'} transition-all duration-300 flex-shrink-0 flex flex-col h-full relative z-20 rounded-2xl overflow-hidden`}
+    >
+      {/* ===== CAMADA BASE (z-0): Gradiente Navy Escuro ===== */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background: 'linear-gradient(180deg, #1e3a8a 0%, #020617 100%)',
+        }}
+      />
 
-      {/* Popover de Notificações */}
-      {showNotificacoes && (
-        <div ref={popoverRef} className="absolute left-full top-16 ml-2 w-80 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 flex flex-col max-h-96 overflow-hidden animate-in fade-in slide-in-from-left-2 duration-200">
-          <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30">
-            <h3 className="text-xs font-black text-slate-800 dark:text-white uppercase tracking-wider">
-              Notificações {unreadCount > 0 && `(${unreadCount})`}
-            </h3>
-            {unreadCount > 0 && (
-              <button 
-                onClick={marcarTodasComoLidas} 
-                className="text-[10px] text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-bold uppercase tracking-wider"
-              >
-                Marcar todas
-              </button>
-            )}
-          </div>
-          <div className="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
-            {notificacoes.length === 0 ? (
-              <div className="p-6 text-center text-xs text-slate-400 dark:text-slate-500 italic">
-                Nenhuma notificação por enquanto.
-              </div>
-            ) : (
-              notificacoes.map((n: any) => (
-                <div 
-                  key={n.id} 
-                  onClick={async () => {
-                    if (!n.lida) await marcarComoLida(n.id);
-                    setShowNotificacoes(false);
-                    if (n.ordem_servico_id) {
-                      router.push(`/?abrirChamado=${n.ordem_servico_id}`);
-                    }
-                  }}
-                  className={`p-4 transition-colors cursor-pointer text-left ${
-                    !n.lida 
-                      ? 'bg-blue-50/30 dark:bg-blue-900/5 hover:bg-blue-50/50 dark:hover:bg-blue-900/10' 
-                      : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                  }`}
-                >
-                  <div className="flex justify-between items-start gap-2">
-                    <span className={`text-[10px] font-black uppercase tracking-wider ${!n.lida ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'}`}>
-                      {n.titulo}
-                    </span>
-                    {!n.lida && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-1" />
-                    )}
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 font-medium leading-relaxed">
-                    {n.mensagem}
-                  </p>
-                  <span className="text-[9px] text-slate-400 dark:text-slate-500 block mt-1">
-                    {new Date(n.criado_em).toLocaleString('pt-BR')}
+      {/* ===== CAMADA DE CONTEUDO (z-1) ===== */}
+      <div className="relative z-10 flex flex-col h-full">
+
+        {/* --- TOPO: Logo / Nome / Ações --- */}
+        <div className={`flex flex-col ${isCollapsed ? 'items-center py-4 px-1 gap-3' : 'p-4 pb-3'}`}>
+          {!isCollapsed ? (
+            <>
+              {/* Header expandido: saudação + ações */}
+              <div className="flex items-center gap-2 mb-1">
+                {/* Avatar placeholder */}
+                <div className="w-8 h-8 rounded-full bg-navy-500 flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xs font-black">
+                    {nome ? nome.charAt(0).toUpperCase() : 'U'}
                   </span>
                 </div>
-              ))
-            )}
-          </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white text-xs font-bold truncate leading-tight">
+                    Olá, {nome || 'Usuario'}
+                  </p>
+                  <p className="text-blue-300/60 text-[9px] font-semibold uppercase tracking-wider truncate">
+                    {cargo}
+                  </p>
+                </div>
+                <button
+                  onClick={logout}
+                  className="p-1.5 rounded-lg text-white hover:bg-white/10 transition-colors flex-shrink-0"
+                  title="Sair"
+                >
+                  <LogOut size={15} />
+                </button>
+              </div>
+
+              {/* Ações: Notificação, Tema, Recolher */}
+              <div className="flex items-center gap-0.5 mt-1">
+                <button
+                  onClick={toggleSidebar}
+                  className="p-1.5 rounded-lg text-slate-100 hover:text-white hover:bg-white/10 transition-colors"
+                  title="Recolher"
+                >
+                  <ChevronLeft size={15} />
+                </button>
+                <button
+                  id="btn-notificacoes"
+                  onClick={() => setShowNotificacoes(!showNotificacoes)}
+                  className="p-1.5 rounded-lg text-slate-100 hover:text-white hover:bg-white/10 transition-colors relative"
+                  title="Notificações"
+                >
+                  <Bell size={15} />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-red-500 rounded-full" />
+                  )}
+                </button>
+                <button
+                  onClick={toggleTheme}
+                  className="p-1.5 rounded-lg text-slate-100 hover:text-white hover:bg-white/10 transition-colors"
+                  title="Alternar Tema"
+                >
+                  {theme === 'light' ? <Moon size={15} /> : <Sun size={15} className="text-yellow-400" />}
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Header colapsado: avatar + ícones empilhados */}
+              <div className="w-8 h-8 rounded-full bg-navy-500 flex items-center justify-center">
+                <span className="text-white text-xs font-black">
+                  {nome ? nome.charAt(0).toUpperCase() : 'U'}
+                </span>
+              </div>
+              <button
+                onClick={toggleSidebar}
+                className="p-1.5 rounded-lg text-slate-100 hover:text-white hover:bg-white/10 transition-colors"
+                title="Expandir Menu"
+              >
+                <Menu size={17} />
+              </button>
+              <button
+                id="btn-notificacoes"
+                onClick={() => setShowNotificacoes(!showNotificacoes)}
+                className="p-1.5 rounded-lg text-slate-100 hover:text-white hover:bg-white/10 transition-colors relative"
+                title="Notificações"
+              >
+                <Bell size={17} />
+                {unreadCount > 0 && (
+                  <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-red-500 rounded-full" />
+                )}
+              </button>
+              <button
+                onClick={toggleTheme}
+                className="p-1.5 rounded-lg text-slate-100 hover:text-white hover:bg-white/10 transition-colors"
+                title="Alternar Tema"
+              >
+                {theme === 'light' ? <Moon size={17} /> : <Sun size={17} className="text-yellow-400" />}
+              </button>
+              <button
+                onClick={logout}
+                className="p-1.5 rounded-lg text-white hover:bg-white/10 transition-colors"
+                title="Sair"
+              >
+                <LogOut size={17} />
+              </button>
+            </>
+          )}
         </div>
-      )}
 
-      <nav className={`flex-1 space-y-1 ${isCollapsed ? 'px-2' : 'px-4'}`}>
-        <Link href="/novo" title="Criar Chamado" className={`${linkClass} ${pathname === '/novo' ? activeClass : ''} ${isCollapsed ? 'justify-center' : ''}`}>
-          <UserPlus size={isCollapsed ? 22 : 18} className="flex-shrink-0" />
-          {!isCollapsed && <span className="truncate">Criar Chamado</span>}
-        </Link>
-
-        <Link href="/" title="Chamados" className={`${linkClass} ${pathname === '/' ? activeClass : ''} ${isCollapsed ? 'justify-center' : ''}`}>
-          <ClipboardList size={isCollapsed ? 22 : 18} className="flex-shrink-0" />
-          {!isCollapsed && <span className="truncate">Chamados</span>}
-        </Link>
-
-        {cargo === 'Admin' && (
-          <>
-            <Link href="/usuarios" title="Usuários" className={`${linkClass} ${pathname === '/usuarios' ? activeClass : ''} ${isCollapsed ? 'justify-center' : ''}`}>
-              <Users size={isCollapsed ? 22 : 18} className="flex-shrink-0" />
-              {!isCollapsed && <span className="truncate">Usuários</span>}
-            </Link>
-            <Link href="/estatisticas" title="Estatísticas" className={`${linkClass} ${pathname === '/estatisticas' ? activeClass : ''} ${isCollapsed ? 'justify-center' : ''}`}>
-              <BarChart3 size={isCollapsed ? 22 : 18} className="flex-shrink-0" />
-              {!isCollapsed && <span className="truncate">Estatísticas</span>}
-            </Link>
-          </>
+        {/* --- Popover de Notificações --- */}
+        {showNotificacoes && (
+          <div ref={popoverRef} className="absolute left-full top-16 ml-2 w-80 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 flex flex-col max-h-96 overflow-hidden animate-in fade-in slide-in-from-left-2 duration-200">
+            <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30">
+              <h3 className="text-xs font-black text-slate-800 dark:text-white uppercase tracking-wider">
+                Notificações {unreadCount > 0 && `(${unreadCount})`}
+              </h3>
+              {unreadCount > 0 && (
+                <button
+                  onClick={marcarTodasComoLidas}
+                  className="text-[10px] text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-bold uppercase tracking-wider"
+                >
+                  Marcar todas
+                </button>
+              )}
+            </div>
+            <div className="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+              {notificacoes.length === 0 ? (
+                <div className="p-6 text-center text-xs text-slate-400 dark:text-slate-500 italic">
+                  Nenhuma notificação por enquanto.
+                </div>
+              ) : (
+                notificacoes.map((n: any) => (
+                  <div
+                    key={n.id}
+                    onClick={async () => {
+                      if (!n.lida) await marcarComoLida(n.id);
+                      setShowNotificacoes(false);
+                      if (n.ordem_servico_id) {
+                        router.push(`/?abrirChamado=${n.ordem_servico_id}`);
+                      }
+                    }}
+                    className={`p-4 transition-colors cursor-pointer text-left ${!n.lida
+                        ? 'bg-blue-50/30 dark:bg-blue-900/5 hover:bg-blue-50/50 dark:hover:bg-blue-900/10'
+                        : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                      }`}
+                  >
+                    <div className="flex justify-between items-start gap-2">
+                      <span className={`text-[10px] font-black uppercase tracking-wider ${!n.lida ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                        {n.titulo}
+                      </span>
+                      {!n.lida && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-1" />
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 font-medium leading-relaxed">
+                      {n.mensagem}
+                    </p>
+                    <span className="text-[9px] text-slate-400 dark:text-slate-500 block mt-1">
+                      {new Date(n.criado_em).toLocaleString('pt-BR')}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         )}
-      </nav>
 
-      <div className={`py-4 border-t border-slate-200 dark:border-slate-800 space-y-1 ${isCollapsed ? 'px-2' : 'px-4'}`}>
-        <Link href="/configuracoes" title="Configurações" className={`${linkClass} ${pathname === '/configuracoes' ? activeClass : ''} ${isCollapsed ? 'justify-center' : ''}`}>
-          <Settings size={isCollapsed ? 22 : 18} className="flex-shrink-0" />
-          {!isCollapsed && <span className="truncate">Configurações</span>}
-        </Link>
-        
-        <button onClick={logout} title="Sair" className={`flex items-center gap-3 p-3 w-full text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all rounded-xl font-medium text-sm ${isCollapsed ? 'justify-center' : ''}`}>
-          <LogOut size={isCollapsed ? 22 : 18} className="flex-shrink-0" />
-          {!isCollapsed && <span className="truncate">Sair</span>}
-        </button>
+        {/* ===== CAMADA 2 (z-1): Painel Acinzentado da Navegação ===== */}
+        <div className="flex-1 flex flex-col rounded-t-2xl bg-white/[0.07] border-t-[3px] border-[#172554] overflow-hidden">
+          <nav className={`flex-1 space-y-0.5 ${isCollapsed ? 'px-1.5' : 'px-2'} py-2`}>
+            {navItems
+              .filter(item => item.roles.includes(cargo) || !cargo)
+              .map(item => {
+                const Icon = item.icon;
+                const active = isActive(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    title={item.label}
+                    className={`flex items-center gap-3 rounded-lg transition-all duration-200 group
+                      ${isCollapsed ? 'justify-center p-2.5' : 'px-3 py-2.5'}
+                      ${active
+                        ? 'bg-white/15 text-white'
+                        : 'text-slate-100 hover:text-white hover:bg-white/8'
+                      }
+                    `}
+                  >
+                    <Icon size={isCollapsed ? 19 : 17} className="flex-shrink-0" />
+                    {!isCollapsed && (
+                      <span className="text-xs font-semibold truncate">{item.label}</span>
+                    )}
+                  </Link>
+                );
+              })}
+          </nav>
+        </div>
       </div>
     </aside>
   );

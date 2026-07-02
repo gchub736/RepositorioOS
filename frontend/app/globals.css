@@ -3,14 +3,25 @@
 @theme {
   --color-slate-950: #020617;
   --color-slate-900: #0f172a;
+
+  /* Paleta Institucional Navy */
+  --color-navy-950: #060e1f;
+  --color-navy-900: #0a1628;
+  --color-navy-800: #0f1f3a;
+  --color-navy-700: #162544;
+  --color-navy-600: #1a3a7a;
+  --color-navy-500: #1e4a9a;
+  --color-navy-400: #2a5db8;
 }
 
 /* Configuração para o botão ModoEscuro.tsx funcionar */
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #f8fafc;
+  --background: #e8ecf1;
   --foreground: #0f172a;
+  --sidebar-width-collapsed: 56px;
+  --sidebar-width-expanded: 220px;
 }
 
 .dark {

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Pin } from "lucide-react";
+import { Pin, SquarePen, Trash2, Home } from "lucide-react";
 import api from "./services/api";
 import Paginacao from "./components/Paginacao";
 
@@ -75,7 +75,7 @@ const renderSlaInfo = (os: any) => {
     <div className={`p-4 rounded-xl border ${bgClass} mb-6 flex flex-col gap-1.5`}>
       <div className="flex justify-between items-center">
         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Controle de SLA</span>
-        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded ${statusSla === "vencido" ? "bg-red-100 text-red-700" :
+        <span className={`text-[9px] font-black uppercase px-2 py-1 rounded ${statusSla === "vencido" ? "bg-red-100 text-red-700" :
           statusSla === "alerta" ? "bg-yellow-100 text-yellow-700" :
             statusSla === "pausado" ? "bg-indigo-100 text-indigo-700" :
               "bg-green-100 text-green-700"
@@ -602,13 +602,13 @@ export default function ListaChamados() {
                   />
                   <div className="flex gap-2 justify-end">
                     <button onClick={() => setComentarioEditandoId(null)} className="text-[10px] px-3 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 rounded-lg text-slate-700 dark:text-slate-200 font-bold transition-colors uppercase">Cancelar</button>
-                    <button onClick={() => salvarEdicaoComentario(c.id)} className="text-[10px] px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-bold transition-colors uppercase">Salvar</button>
+                    <button onClick={() => salvarEdicaoComentario(c.id)} className="text-[10px] px-3 py-1.5 bg-blue-900 hover:bg-blue-800 rounded-lg text-white font-bold transition-colors uppercase">Salvar</button>
                   </div>
                 </div>
               ) : (
                 <>
                   <div className={`p-3 rounded-2xl text-xs leading-relaxed group relative ${isMe
-                    ? "bg-blue-600 text-white rounded-tr-none"
+                    ? "bg-blue-900 text-white rounded-tr-none"
                     : "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-tl-none border border-slate-200/50 dark:border-slate-700/50"
                     }`}>
                     {c.parent && (
@@ -621,20 +621,20 @@ export default function ListaChamados() {
 
                     <div className={`hidden group-hover:flex absolute -top-3 ${isMe ? "right-0" : "left-0"} bg-white dark:bg-slate-800 shadow-lg rounded-lg border border-slate-200 dark:border-slate-700 p-1 gap-1 z-10 items-center`}>
                       <button onClick={() => setComentarioRespondendo(c)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-green-500 transition-colors" title="Responder">
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
                       </button>
                       {c.pode_deletar && (
                         <>
                           {c.pode_editar && (
                             <button onClick={() => { setComentarioEditandoId(c.id); setComentarioEditandoConteudo(c.conteudo); }} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-blue-500 transition-colors" title="Editar">
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                              <SquarePen size={16} className="w-3.5 h-3.5" />
                             </button>
                           )}
-                          <button onClick={() => deletarComentario(c.id, 'mim')} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-orange-500 transition-colors" title="Excluir apenas para mim">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
+                          <button onClick={() => deletarComentario(c.id, 'mim')} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-orange-500 transition-colors" title="Deletar">
+                            <Trash2 size={16} className="w-3.5 h-3.5" />
                           </button>
-                          <button onClick={() => deletarComentario(c.id, 'todos')} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-red-500 transition-colors" title="Excluir para todos">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                          <button onClick={() => deletarComentario(c.id, 'todos')} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-red-500 transition-colors" title="Deletar">
+                            <Trash2 size={16} className="w-3.5 h-3.5" />
                           </button>
                         </>
                       )}
@@ -727,32 +727,32 @@ export default function ListaChamados() {
   };
 
   const slaLabel: any = {
-    vencido: "🔴 SLA Vencido",
-    alerta: "🟡 SLA em Risco",
-    ok: "🟢 No Prazo",
-    pausado: "⏸️ SLA Suspenso",
+    vencido: "Vencido",
+    alerta: "Em Alerta",
+    ok: "No Prazo",
+    pausado: "Pausado",
   };
 
-  const selectClass = "w-full p-3 mt-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-blue-500";
-  const filterClass = "p-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-xs bg-white dark:bg-slate-900 outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-white";
+  const selectClass = "w-full p-3 mt-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-blue-500";
+  const filterClass = "p-2.5 border border-slate-200 dark:border-slate-800 rounded-lg text-xs bg-white dark:bg-slate-900 outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-white";
 
   const ordensExibicao = Array.isArray(ordens) ? ordens : [];
 
   return (
     <>
-      <div className="p-4 md:p-6 max-w-full overflow-hidden">
+      <div className="p-6 max-w-full overflow-hidden h-full flex flex-col">
+        <div className="flex items-center gap-1.5 mb-2 text-xs">
+          <Home size={14} className="text-slate-400 dark:text-slate-500" />
+          <span className="text-slate-400 dark:text-slate-500 font-medium">Início</span>
+          <span className="text-slate-400 dark:text-slate-500">&gt;</span>
+          <span className="text-slate-600 dark:text-slate-300 font-semibold">Chamados</span>
+        </div>
         <div className="flex justify-between items-center mb-6">
           <div>
             <h2 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tighter">Gestão de Chamados</h2>
             <p className="text-slate-500 dark:text-slate-400 text-sm">Visualize e gerencie as ordens de serviço.</p>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={exportarCSV}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-lg shadow-indigo-500/20"
-            >
-              Exportar CSV
-            </button>
             <input
               type="text"
               placeholder="Filtrar por ID ou título..."
@@ -760,10 +760,22 @@ export default function ListaChamados() {
               value={filtros.busca}
               onChange={(e) => setFiltros({ ...filtros, busca: e.target.value, page: 1 })}
             />
+            <button
+              onClick={exportarCSV}
+              className="px-4 py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-lg text-xs uppercase tracking-wider transition-all shadow-sm"
+            >
+              CSV
+            </button>
+            <button
+              onClick={() => router.push('/novo')}
+              className="px-4 py-2.5 bg-[#1e3a8a] hover:bg-[#162e6e] text-white font-bold rounded-lg text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-lg shadow-[#1e3a8a]/20"
+            >
+              Adicionar
+            </button>
           </div>
         </div>
 
-        <div className="flex gap-3 mb-6 flex-wrap">
+        <div className="flex gap-3 mb-6 flex-wrap bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm">
           {cargo !== "Usuario" && (
             <select value={filtros.status} onChange={(e) => setFiltros({ ...filtros, status: e.target.value, page: 1 })} className={filterClass}>
               <option value="">Todos os status</option>
@@ -775,10 +787,10 @@ export default function ListaChamados() {
           {cargo !== "Usuario" && (
             <select value={filtros.sla} onChange={(e) => setFiltros({ ...filtros, sla: e.target.value, page: 1 })} className={filterClass}>
               <option value="">Todos os SLAs</option>
-              <option value="ok">🟢 No Prazo</option>
-              <option value="alerta">🟡 Em Alerta</option>
-              <option value="vencido">🔴 Vencido</option>
-              <option value="pausado">⏸️ Pausado</option>
+              <option value="ok">No Prazo</option>
+              <option value="alerta">Em Alerta</option>
+              <option value="vencido">Vencido</option>
+              <option value="pausado">Pausado</option>
             </select>
           )}
           <select value={filtros.categoria} onChange={(e) => setFiltros({ ...filtros, categoria: e.target.value, page: 1 })} className={filterClass}>
@@ -795,12 +807,6 @@ export default function ListaChamados() {
                   <option key={u.id} value={u.nome}>{u.nome}</option>
                 ))}
               </select>
-              <select value={filtros.prioridade} onChange={(e) => setFiltros({ ...filtros, prioridade: e.target.value, page: 1 })} className={filterClass}>
-                <option value="">Todas as prioridades</option>
-                {prioridadesList.map((p: any) => (
-                  <option key={p.id} value={p.nome}>{p.nome}</option>
-                ))}
-              </select>
             </>
           )}
           <select value={filtros.per_page} onChange={(e) => setFiltros({ ...filtros, per_page: Number(e.target.value), page: 1 })} className={filterClass}>
@@ -809,33 +815,48 @@ export default function ListaChamados() {
             <option value={50}>50 por página</option>
             <option value={100}>100 por página</option>
           </select>
-          {((cargo !== "Usuario" && (filtros.status || filtros.urgencia || filtros.prioridade)) || filtros.categoria) && (
-            <button onClick={() => setFiltros({ ...filtros, status: "", categoria: "", urgencia: "", prioridade: "", page: 1, per_page: 15 })} className="text-xs font-bold text-red-400 hover:text-red-600 px-3">
+          {((cargo !== "Usuario" && (filtros.status || filtros.urgencia)) || filtros.categoria) && (
+            <button onClick={() => setFiltros({ ...filtros, status: "", categoria: "", urgencia: "", page: 1, per_page: 15 })} className="text-xs font-bold text-red-400 hover:text-red-600 px-3">
               Limpar filtros
             </button>
           )}
         </div>
 
+        {/* PAGINAÇÃO SUPERIOR */}
+        {meta && meta.last_page > 1 && (
+          <div className="flex justify-between items-center bg-white dark:bg-slate-900 px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm mb-4">
+            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest hidden md:block">
+              Página {filtros.page} de {meta.last_page} • {meta.total} {meta.total === 1 ? 'Chamado' : 'Chamados'}
+            </div>
+            <div className="flex items-center">
+              <Paginacao
+                currentPage={filtros.page}
+                lastPage={meta.last_page}
+                onPageChange={(page) => setFiltros({ ...filtros, page })}
+              />
+            </div>
+          </div>
+        )}
+
         {/* TABELA CONDICIONAL (SIMPLIFICADA PARA CLIENTE OU COMPLETA PARA ADMIN/TECNICO) */}
         {cargo === "Usuario" ? (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-x-auto max-w-full">
+          <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 overflow-x-auto max-w-full">
             <table className="w-full text-left text-[11px] table-fixed">
-              <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase text-[10px] tracking-widest">
+              <thead className="bg-blue-900 text-white font-bold uppercase text-[10px] tracking-widest">
                 <tr>
-                  <th className="px-4 py-3 w-[45%]">Título</th>
+                  <th className="px-4 py-3 rounded-tl-lg w-[45%]">Chamado</th>
                   <th className="px-4 py-3 w-[15%]">Categoria</th>
-                  <th className="px-4 py-3 w-[15%]">Localização</th>
-                  <th className="px-4 py-3 w-[12%] text-center">Data de Abertura</th>
-                  <th className="px-4 py-3 w-[10%] text-center">Situação</th>
-                  <th className="px-4 py-3 w-[8%] text-right">Ações</th>
+                  <th className="px-4 py-3 w-[15%] text-center">Abertura</th>
+                  <th className="px-4 py-3 w-[15%] text-center">Situação</th>
+                  <th className="px-4 py-3 rounded-tr-lg w-[10%] text-right">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {carregando && (
                   <tr>
-                    <td colSpan={6} className="px-4 py-10 text-center text-slate-400 dark:text-slate-600 italic text-sm">
+                    <td colSpan={5} className="px-4 py-10 text-center text-slate-400 dark:text-slate-600 italic text-sm">
                       <div className="flex items-center justify-center gap-2">
-                        <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-4 h-4 border-2 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
                         <span>Carregando chamados...</span>
                       </div>
                     </td>
@@ -843,48 +864,44 @@ export default function ListaChamados() {
                 )}
                 {!carregando && ordensExibicao.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-4 py-10 text-center text-slate-400 dark:text-slate-600 italic text-sm">
+                    <td colSpan={5} className="px-4 py-10 text-center text-slate-400 dark:text-slate-600 italic text-sm">
                       Você ainda não abriu nenhum chamado.
                     </td>
                   </tr>
                 )}
                 {!carregando && ordensExibicao.map((os: any, index: number) => (
-                  <tr
-                    key={os.id}
-                    className={`transition-colors ${navMode && navIndex === index ? 'bg-blue-100 dark:bg-blue-900/40 ring-2 ring-blue-500 ring-inset cursor-pointer' : 'hover:bg-slate-50 dark:hover:bg-slate-800/30'}`}
-                  >
-                    <td className="px-4 py-3 font-bold text-slate-800 dark:text-slate-200 overflow-hidden">
-                      <div className="flex items-center gap-2">
-                        {cargo !== "Usuario" && (
-                          <button onClick={() => fixarChamado(os.id)} className={`flex-shrink-0 transition-colors ${os.fixada ? 'text-red-500 hover:text-red-600' : 'text-slate-300 hover:text-slate-400 dark:text-slate-600 dark:hover:text-slate-500'}`} title={os.fixada ? 'Desfixar Chamado' : 'Fixar Chamado'}>
-                            <Pin size={14} className={os.fixada ? "fill-current" : ""} />
-                          </button>
-                        )}
-                        <span className="truncate overflow-hidden">{os.titulo}</span>
-                        {os.anexo_url && (
-                          <button onClick={() => setAnexoPreview({ url: os.anexo_url, osId: os.id })} className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded text-[9px] font-bold uppercase flex-shrink-0 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">📎 Anexo</button>
-                        )}
+                    <tr key={os.id}>
+                    <td className="px-4 py-3 overflow-hidden align-middle">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-200">
+                          <span className="truncate overflow-hidden text-sm">{os.titulo}</span>
+                          {os.anexo_url && (
+                            <button onClick={() => setAnexoPreview({ url: os.anexo_url, osId: os.id })} className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded text-[9px] font-bold uppercase flex-shrink-0 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" title="Ver Anexo">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                            </button>
+                          )}
+                        </div>
+                        <span className="text-slate-500 dark:text-slate-400 text-[10px] truncate">
+                          {os.localizacao || <span className="italic">Local não informado</span>}
+                        </span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 overflow-hidden">
-                      <span className={`px-1.5 py-0.5 rounded-lg text-[9px] font-black uppercase ${categoriaCor[os.categoria?.nome || os.categoria] || "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"}`}>
+                    <td className="px-4 py-3 overflow-hidden align-middle">
+                      <span className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase ${categoriaCor[os.categoria?.nome || os.categoria] || "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"}`}>
                         {os.categoria?.nome || os.categoria || "-"}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-[10px] truncate overflow-hidden">
-                      {os.localizacao || <span className="italic text-slate-300 dark:text-slate-600">Não informada</span>}
-                    </td>
-                    <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-[10px] text-center truncate overflow-hidden">
+                    <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-[11px] font-semibold text-center truncate overflow-hidden align-middle">
                       {os.criado_em ? new Date(os.criado_em).toLocaleDateString("pt-BR") : "-"}
                     </td>
-                    <td className="px-4 py-3 text-center overflow-hidden">
-                      <span className={`px-1.5 py-0.5 rounded-lg text-[9px] font-black uppercase truncate ${statusCor[os.status?.nome || os.status] || "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"}`}>
+                    <td className="px-4 py-3 text-center overflow-hidden align-middle">
+                      <span className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase truncate ${statusCor[os.status?.nome || os.status] || "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"}`}>
                         {os.status?.nome || os.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right overflow-hidden">
-                      <button onClick={() => abrirModalEdicao(os)} className="text-blue-600 font-bold hover:underline text-[10px] tracking-wider uppercase">
-                        DETALHES
+                    <td className="px-4 py-3 text-right overflow-hidden align-middle">
+                      <button onClick={() => abrirModalEdicao(os)} className="px-3 py-1.5 bg-blue-900 hover:bg-blue-800 text-white rounded-lg font-bold text-[10px] tracking-wider uppercase transition-colors shadow-sm">
+                        Detalhes
                       </button>
                     </td>
                   </tr>
@@ -893,32 +910,26 @@ export default function ListaChamados() {
             </table>
           </div>
         ) : (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-x-auto max-w-full">
+          <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 overflow-x-auto max-w-full">
             <table className="w-full text-left text-[11px] table-fixed">
-              <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase text-[10px] tracking-widest">
+              <thead className="bg-blue-900 text-white font-bold uppercase text-[10px] tracking-widest">
                 <tr>
-                  <th className="px-2 py-3 w-[4%]">ID</th>
-                  <th className="px-2 py-3 w-[10%]">Título</th>
-                  <th className="px-2 py-3 w-[7%]">Categoria</th>
-                  <th className="px-2 py-3 w-[8%]">Localização</th>
-                  <th className="px-2 py-3 w-[7%]">Aberto por</th>
-                  <th className="px-2 py-3 w-[7%] text-center">Abertura</th>
-                  <th className="px-2 py-3 w-[8%] text-center">SLA</th>
-                  <th className="px-2 py-3 w-[8%] text-center">Status</th>
-                  <th className="px-2 py-3 w-[8%]">Motivo</th>
-                  <th className="px-2 py-3 w-[7%] text-center">Urgência</th>
-                  <th className="px-2 py-3 w-[7%] text-center">Prioridade</th>
-                  <th className="px-2 py-3 w-[7%]">Técnico</th>
-                  <th className="px-2 py-3 w-[7%]">Solução</th>
-                  <th className="px-2 py-3 w-[5%] text-right">Ações</th>
+                  <th className="px-3 py-3 w-[20%] border-l-4 border-blue-900">CHAMADOS</th>
+                  <th className="px-3 py-3 w-[12%]">Categoria</th>
+                  <th className="px-3 py-3 w-[15%]">Solicitante</th>
+                  <th className="px-3 py-3 w-[11%] text-center">Urgência</th>
+                  <th className="px-3 py-3 w-[11%] text-center">Status</th>
+                  <th className="px-3 py-3 w-[10%] text-center">SLA</th>
+                  <th className="px-3 py-3 w-[11%]">Responsável</th>
+                  <th className="px-3 py-3 w-[10%] text-center">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {carregando && (
                   <tr>
-                    <td colSpan={14} className="px-6 py-10 text-center text-slate-400 dark:text-slate-600 italic text-sm">
+                    <td colSpan={8} className="px-6 py-10 text-center text-slate-400 dark:text-slate-600 italic text-sm">
                       <div className="flex items-center justify-center gap-2">
-                        <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-4 h-4 border-2 border-navy-500 border-t-transparent rounded-full animate-spin"></div>
                         <span>Carregando chamados...</span>
                       </div>
                     </td>
@@ -926,7 +937,7 @@ export default function ListaChamados() {
                 )}
                 {!carregando && ordensExibicao.length === 0 && (
                   <tr>
-                    <td colSpan={14} className="px-6 py-10 text-center text-slate-400 dark:text-slate-600 italic text-sm">
+                    <td colSpan={8} className="px-6 py-10 text-center text-slate-400 dark:text-slate-600 italic text-sm">
                       Nenhum chamado encontrado.
                     </td>
                   </tr>
@@ -936,39 +947,68 @@ export default function ListaChamados() {
                   return (
                     <tr
                       key={os.id}
-                      className={`transition-colors ${navMode && navIndex === index ? 'bg-blue-100 dark:bg-blue-900/40 ring-2 ring-blue-500 ring-inset cursor-pointer' : 'hover:bg-slate-50 dark:hover:bg-slate-800/30'} ${slaStatus === "vencido" ? "border-l-4 border-l-red-500" : slaStatus === "alerta" ? "border-l-4 border-l-yellow-400" : ""}`}
+                      className={`transition-colors ${navMode && navIndex === index ? 'bg-blue-100 dark:bg-blue-900/40 ring-2 ring-blue-500 ring-inset cursor-pointer' : 'hover:bg-slate-50 dark:hover:bg-slate-800/30'}`}
                     >
-                      <td className="px-2 py-3 font-mono text-blue-600 dark:text-blue-400 truncate overflow-hidden">#{os.id}</td>
-                      <td className="px-2 py-3 font-bold text-slate-800 dark:text-slate-200 overflow-hidden">
-                        <div className="flex items-center gap-2">
-                          {cargo !== "Usuario" && (
+                      <td className={`px-3 py-3 overflow-hidden align-middle ${slaStatus === "vencido" ? "border-l-4 border-l-red-500" : slaStatus === "alerta" ? "border-l-4 border-l-yellow-400" : "border-l-4 border-l-transparent"}`}>
+                        <div className="flex flex-col gap-1 justify-center">
+                          <div className="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-200">
                             <button onClick={() => fixarChamado(os.id)} className={`flex-shrink-0 transition-colors ${os.fixada ? 'text-red-500 hover:text-red-600' : 'text-slate-300 hover:text-slate-400 dark:text-slate-600 dark:hover:text-slate-500'}`} title={os.fixada ? 'Desfixar Chamado' : 'Fixar Chamado'}>
-                              <Pin size={14} className={os.fixada ? "fill-current" : ""} />
+                              <Pin size={12} className={os.fixada ? "fill-current" : ""} />
                             </button>
-                          )}
-                          <span className="truncate overflow-hidden">{os.titulo}</span>
-                          {os.anexo_url && (
-                            <button onClick={() => setAnexoPreview({ url: os.anexo_url, osId: os.id })} className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded text-[9px] font-bold uppercase flex-shrink-0 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">📎 Anexo</button>
+                            <span className="text-[10px] text-blue-900 dark:text-blue-400 font-mono">#{os.id}</span>
+                            {os.anexo_url && (
+                              <button onClick={() => setAnexoPreview({ url: os.anexo_url, osId: os.id })} className="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded text-[8px] font-bold uppercase flex-shrink-0 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" title="Ver Anexo">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                              </button>
+                            )}
+                          </div>
+                          <span className="truncate overflow-hidden text-xs font-bold text-slate-700 dark:text-slate-300">{os.titulo}</span>
+                        </div>
+                      </td>
+                      <td className="px-3 py-3 overflow-hidden align-middle">
+                        <div className="flex items-center h-full">
+                          <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase ${categoriaCor[os.categoria?.nome || os.categoria] || "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"}`}>
+                            {os.categoria?.nome || os.categoria || "-"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-3 py-3 overflow-hidden align-middle">
+                        <div className="flex flex-col gap-0.5 justify-center h-full">
+                          <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 truncate">
+                            {os.usuario?.nome || "-"}
+                          </span>
+                          <span className="text-[9px] text-slate-500 dark:text-slate-400 truncate">
+                            {os.criado_em ? new Date(os.criado_em).toLocaleDateString("pt-BR") : "-"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-3 py-3 text-center overflow-hidden align-middle">
+                        <div className="flex flex-col gap-1 items-center justify-center h-full">
+                          <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase w-max ${urgenciaCor[os.urgencia?.nome || os.urgencia] || "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"}`} title="Urgência">
+                            {os.urgencia?.nome || os.urgencia || "-"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-3 py-3 text-center align-middle">
+                        <div className="flex flex-col items-center justify-center relative">
+                          <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase truncate w-max ${(os.status?.nome || os.status) === "Fechado" ? "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+                            : ["Pausado", "Aguardando Peça"].includes(os.status?.nome || os.status) ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
+                              : (os.status?.nome || os.status) === "Em Andamento" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                                : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                            }`}
+                          >
+                            {os.status?.nome || os.status}
+                          </span>
+                          {os.motivo_pausa && (
+                            <span className="absolute -bottom-3.5 text-[9px] font-bold text-indigo-500 dark:text-indigo-400 truncate max-w-[90px]" title={os.motivo_pausa}>
+                              {os.motivo_pausa}
+                            </span>
                           )}
                         </div>
                       </td>
-                      <td className="px-2 py-3 overflow-hidden">
-                        <span className={`px-1.5 py-0.5 rounded-lg text-[9px] font-black uppercase ${categoriaCor[os.categoria?.nome || os.categoria] || "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"}`}>
-                          {os.categoria?.nome || os.categoria || "-"}
-                        </span>
-                      </td>
-                      <td className="px-2 py-3 text-slate-500 dark:text-slate-400 text-[10px] truncate overflow-hidden">
-                        {os.localizacao || <span className="italic text-slate-300 dark:text-slate-600">Não informada</span>}
-                      </td>
-                      <td className="px-2 py-3 text-slate-500 dark:text-slate-400 text-[10px] truncate overflow-hidden">
-                        {os.usuario?.nome || "-"}
-                      </td>
-                      <td className="px-2 py-3 text-slate-500 dark:text-slate-400 text-[10px] text-center truncate overflow-hidden">
-                        {os.criado_em ? new Date(os.criado_em).toLocaleDateString("pt-BR") : "-"}
-                      </td>
-                      <td className="px-2 py-3 text-center overflow-hidden">
+                      <td className="px-3 py-3 text-center overflow-hidden align-middle">
                         {slaStatus ? (
-                          <span className={`px-1.5 py-0.5 rounded-lg text-[9px] font-black uppercase truncate ${slaStatus === "vencido" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                          <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase truncate ${slaStatus === "vencido" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
                             : slaStatus === "alerta" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
                               : slaStatus === "pausado" ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
                                 : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
@@ -980,59 +1020,27 @@ export default function ListaChamados() {
                           <span className="text-[10px] text-slate-300 dark:text-slate-600 italic">—</span>
                         )}
                       </td>
-                      <td className="px-2 py-3 text-center overflow-hidden">
-                        <span className={`px-1.5 py-0.5 rounded-lg text-[9px] font-black uppercase truncate ${(os.status?.nome || os.status) === "Fechado" ? "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
-                          : ["Pausado", "Aguardando Peça"].includes(os.status?.nome || os.status) ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
-                            : (os.status?.nome || os.status) === "Em Andamento" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
-                              : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                          }`}
-                        >
-                          {os.status?.nome || os.status}
-                        </span>
-                      </td>
-                      <td className="px-2 py-3 overflow-hidden">
-                        {os.motivo_pausa ? (
-                          <span
-                            className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 block truncate"
-                            title={os.motivo_pausa}
-                          >
-                            {os.motivo_pausa}
+                      <td className="px-3 py-3 overflow-hidden align-middle">
+                        <div className="flex flex-col gap-0.5 justify-center h-full">
+                          <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 truncate">
+                            {os.tecnico?.nome || <span className="italic text-slate-400">Sem atribuição</span>}
                           </span>
-                        ) : (
-                          <span className="text-[10px] text-slate-300 dark:text-slate-600 italic">—</span>
-                        )}
-                      </td>
-                      <td className="px-2 py-3 text-center overflow-hidden">
-                        <span className={`px-1.5 py-0.5 rounded-lg text-[9px] font-black uppercase ${urgenciaCor[os.urgencia?.nome || os.urgencia] || "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"}`}>
-                          {os.urgencia?.nome || os.urgencia || "-"}
-                        </span>
-                      </td>
-                      <td className="px-2 py-3 text-center overflow-hidden">
-                        <span className={`px-1.5 py-0.5 rounded-lg text-[9px] font-black uppercase ${urgenciaCor[os.prioridade?.nome || os.prioridade] || "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"}`}>
-                          {os.prioridade?.nome || os.prioridade || "-"}
-                        </span>
-                      </td>
-                      <td className="px-2 py-3 text-slate-500 dark:text-slate-400 text-[10px] truncate overflow-hidden">
-                        {os.tecnico?.nome || <span className="italic text-slate-300 dark:text-slate-600">Não atribuído</span>}
-                      </td>
-                      <td className="px-2 py-3 text-slate-500 dark:text-slate-400 overflow-hidden">
-                        {os.solucao ? (
-                          <span className="truncate block text-[10px]" title={os.solucao}>
-                            {os.solucao}
+                          <span className="text-[9px] text-slate-500 dark:text-slate-400 truncate" title={os.solucao}>
+                            {os.solucao ? os.solucao : <span className="italic">Sem solução</span>}
                           </span>
-                        ) : (
-                          <span className="text-[10px] text-slate-300 dark:text-slate-600 italic">Sem solução</span>
-                        )}
+                        </div>
                       </td>
-                      <td className="px-2 py-3 text-right overflow-hidden">
-                        <button onClick={() => abrirModalEdicao(os)} className="text-blue-600 font-bold mr-1 hover:underline text-[10px]">
-                          EDITAR
-                        </button>
-                        {cargo === "Admin" && (
-                          <button onClick={() => deletarChamado(os.id)} className="text-red-500 font-bold hover:underline text-[10px]">
-                            EXCLUIR
+                      <td className="px-3 py-3 overflow-hidden align-middle">
+                        <div className="flex items-center gap-2 justify-center">
+                          <button onClick={() => abrirModalEdicao(os)} title="Editar" className="p-1.5 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors">
+                            <SquarePen size={16} />
                           </button>
-                        )}
+                          {cargo === "Admin" && (
+                            <button onClick={() => deletarChamado(os.id)} title="Deletar" className="p-1.5 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors">
+                              <Trash2 size={16} />
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );
@@ -1042,49 +1050,18 @@ export default function ListaChamados() {
           </div>
         )}
 
-        {/* PAGINAÇÃO */}
-        {meta && meta.last_page > 1 && (
-          <div className="flex justify-center items-center gap-4 mt-8 flex-wrap">
-            <button
-              disabled={filtros.page === 1}
-              onClick={() => setFiltros({ ...filtros, page: filtros.page - 1 })}
-              className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold disabled:opacity-30 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-            >
-              Anterior
-            </button>
-
-            <Paginacao
-              currentPage={filtros.page}
-              lastPage={meta.last_page}
-              onPageChange={(page) => setFiltros({ ...filtros, page })}
-            />
-
-            <div className="text-center hidden md:block">
-              <span className="text-xs font-black text-slate-500 uppercase tracking-widest block">
-                Página {filtros.page} de {meta.last_page}
-              </span>
-              <span className="text-[10px] text-slate-400">{meta.total} registro{meta.total !== 1 ? 's' : ''} no total</span>
-            </div>
-            <button
-              disabled={filtros.page === meta.last_page}
-              onClick={() => setFiltros({ ...filtros, page: filtros.page + 1 })}
-              className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold disabled:opacity-30 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-            >
-              Próximo
-            </button>
-          </div>
-        )}
-
         {/* MODAL DE EDIÇÃO E DETALHES */}
         {chamadoSelecionado && (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setChamadoSelecionado(null)}>
-            <div className="bg-white dark:bg-slate-900 w-full max-w-3xl rounded-2xl p-5 md:p-6 border border-slate-200 dark:border-slate-800 shadow-2xl overflow-y-auto max-h-[95vh] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]" onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-xl font-black mb-2 text-slate-800 dark:text-white">
-                {cargo === "Usuario" ? "Acompanhamento do Chamado" : `Detalhes e Edição do Chamado #${chamadoSelecionado.id}`}
-              </h3>
-              <p className="text-xs text-slate-400 mb-6 uppercase tracking-widest font-bold">
-                {chamadoSelecionado.titulo}
-              </p>
+            <div className="bg-white dark:bg-slate-900 w-full max-w-4xl rounded-2xl p-5 md:p-6 border border-slate-200 dark:border-slate-800 shadow-2xl overflow-y-auto max-h-[95vh] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]" onClick={(e) => e.stopPropagation()}>
+              <div className="bg-[#1e3a8a] -mt-5 -mx-5 md:-mt-6 md:-mx-6 mb-6 p-5 md:p-6 rounded-t-2xl">
+                <h3 className="text-xl font-black mb-1 text-white">
+                  {cargo === "Usuario" ? "Acompanhamento do Chamado" : `Detalhes e Edição do Chamado #${chamadoSelecionado.id}`}
+                </h3>
+                <p className="text-xs text-blue-200 uppercase tracking-widest font-bold">
+                  {chamadoSelecionado.titulo}
+                </p>
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {cargo === "Usuario" ? (
@@ -1107,7 +1084,7 @@ export default function ListaChamados() {
 
                       <div>
                         <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Situação</span>
-                        <span className={`inline-block px-2 py-0.5 rounded-lg text-[9px] font-black uppercase mt-1 ${statusCor[chamadoSelecionado.status?.nome || chamadoSelecionado.status] || "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"}`}>
+                        <span className={`inline-block px-2 py-1 rounded-lg text-[9px] font-black uppercase mt-1 ${statusCor[chamadoSelecionado.status?.nome || chamadoSelecionado.status] || "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"}`}>
                           {chamadoSelecionado.status?.nome || chamadoSelecionado.status}
                         </span>
                       </div>
@@ -1156,23 +1133,13 @@ export default function ListaChamados() {
                             ))}
                           </select>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="text-xs font-bold text-slate-400 uppercase">Urgência</label>
-                            <select value={urgencia} onChange={(e) => setUrgencia(e.target.value)} className={selectClass}>
-                              {urgenciasList.map((u: any) => (
-                                <option key={u.id} value={u.nome}>{u.nome}</option>
-                              ))}
-                            </select>
-                          </div>
-                          <div>
-                            <label className="text-xs font-bold text-slate-400 uppercase">Prioridade</label>
-                            <select value={prioridade} onChange={(e) => setPrioridade(e.target.value)} className={selectClass}>
-                              {prioridadesList.map((p: any) => (
-                                <option key={p.id} value={p.nome}>{p.nome}</option>
-                              ))}
-                            </select>
-                          </div>
+                        <div>
+                          <label className="text-xs font-bold text-slate-400 uppercase">Urgência</label>
+                          <select value={urgencia} onChange={(e) => setUrgencia(e.target.value)} className={selectClass}>
+                            {urgenciasList.map((u: any) => (
+                              <option key={u.id} value={u.nome}>{u.nome}</option>
+                            ))}
+                          </select>
                         </div>
                       </>
                     )}
@@ -1215,7 +1182,7 @@ export default function ListaChamados() {
                         onChange={(e) => setSolucao(e.target.value)}
                         disabled={cargo === "Usuario"}
                         placeholder="O que foi feito para resolver este chamado?"
-                        className={`${selectClass} h-28 resize-none text-sm`}
+                        className={`${selectClass} h-16 resize-none text-sm`}
                       />
                     </div>
                     <div>
@@ -1232,15 +1199,15 @@ export default function ListaChamados() {
                     </div>
                     <div className="flex justify-end gap-3 mt-4">
                       {cargo === "Usuario" ? (
-                        <button type="button" onClick={() => setChamadoSelecionado(null)} className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-6 py-2.5 rounded-xl font-bold text-xs tracking-wider uppercase transition-all">
+                        <button type="button" onClick={() => setChamadoSelecionado(null)} className="bg-slate-500 hover:bg-slate-600 text-white px-6 py-2.5 rounded-xl font-bold text-xs tracking-wider uppercase transition-all shadow-sm">
                           FECHAR
                         </button>
                       ) : (
                         <>
-                          <button type="button" onClick={() => setChamadoSelecionado(null)} className="text-slate-400 font-bold hover:text-slate-600 dark:hover:text-slate-200 text-xs tracking-wider uppercase">
+                          <button type="button" onClick={() => setChamadoSelecionado(null)} className="bg-slate-500 hover:bg-slate-600 text-white px-6 py-2.5 rounded-xl font-bold text-xs tracking-wider uppercase transition-all shadow-sm">
                             CANCELAR
                           </button>
-                          <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-blue-500/20 text-xs tracking-wider uppercase transition-all">
+                          <button type="submit" className="bg-blue-900 hover:bg-blue-800 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-blue-900/20 text-xs tracking-wider uppercase transition-all">
                             SALVAR
                           </button>
                         </>
@@ -1250,10 +1217,10 @@ export default function ListaChamados() {
                 )}
 
                 {/* Coluna da Direita: Histórico e Discussão */}
-                <div className="border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-800 md:pl-8 pt-6 md:pt-0">
+                <div className="border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-800 md:pl-8 pt-6 md:pt-0 flex flex-col justify-between h-full">
                   {cargo === "Usuario" ? (
                     /* APENAS CHAT PARA O CLIENTE */
-                    <div className="flex flex-col h-[360px]">
+                    <div className="flex flex-col flex-1 min-h-[240px] max-h-[340px]">
                       <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">
                         Mensagens e Discussão
                       </h4>
@@ -1265,41 +1232,43 @@ export default function ListaChamados() {
                     </div>
                   ) : (
                     /* ESTRUTURA ORIGINAL COM SLA E ABAS SWITCHER PARA ADMIN/TECNICO */
-                    <>
-                      {renderSlaInfo(chamadoSelecionado)}
+                    <div className="flex flex-col flex-1 justify-between h-full">
+                      <div>
+                        {renderSlaInfo(chamadoSelecionado)}
 
-                      {/* Abas Switcher */}
-                      <div className="flex border-b border-slate-200 dark:border-slate-800 mb-4 gap-4">
-                        <button
-                          type="button"
-                          onClick={() => setAbaModal("comentarios")}
-                          className={`pb-2 text-xs font-black uppercase tracking-wider transition-colors relative ${abaModal === "comentarios"
-                            ? "text-blue-600 dark:text-blue-400"
-                            : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-                            }`}
-                        >
-                          Discussão ({chamadoSelecionado.comentarios?.length || 0})
-                          {abaModal === "comentarios" && (
-                            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />
-                          )}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setAbaModal("historico")}
-                          className={`pb-2 text-xs font-black uppercase tracking-wider transition-colors relative ${abaModal === "historico"
-                            ? "text-blue-600 dark:text-blue-400"
-                            : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-                            }`}
-                        >
-                          Histórico ({chamadoSelecionado.historicos?.length || 0})
-                          {abaModal === "historico" && (
-                            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />
-                          )}
-                        </button>
+                        {/* Abas Switcher */}
+                        <div className="flex border-b border-slate-200 dark:border-slate-800 mb-4 gap-4">
+                          <button
+                            type="button"
+                            onClick={() => setAbaModal("comentarios")}
+                            className={`pb-2 text-xs font-black uppercase tracking-wider transition-colors relative ${abaModal === "comentarios"
+                              ? "text-blue-600 dark:text-blue-400"
+                              : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                              }`}
+                          >
+                            Discussão ({chamadoSelecionado.comentarios?.length || 0})
+                            {abaModal === "comentarios" && (
+                              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />
+                            )}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setAbaModal("historico")}
+                            className={`pb-2 text-xs font-black uppercase tracking-wider transition-colors relative ${abaModal === "historico"
+                              ? "text-blue-600 dark:text-blue-400"
+                              : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                              }`}
+                          >
+                            Histórico ({chamadoSelecionado.historicos?.length || 0})
+                            {abaModal === "historico" && (
+                              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />
+                            )}
+                          </button>
+                        </div>
                       </div>
 
                       {abaModal === "comentarios" && (
-                        <div className="flex flex-col h-[360px]">
+                        <div className="flex flex-col flex-1 min-h-[240px] max-h-[340px]">
                           {/* Lista de comentários */}
                           {renderComentarios()}
 
@@ -1309,7 +1278,7 @@ export default function ListaChamados() {
                       )}
 
                       {abaModal === "historico" && (
-                        <div className="space-y-4 max-h-[360px] overflow-y-auto pr-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                        <div className="space-y-4 flex-1 min-h-[240px] max-h-[340px] overflow-y-auto pr-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                           {(!chamadoSelecionado.historicos || chamadoSelecionado.historicos.length === 0) ? (
                             <p className="text-xs text-slate-400 dark:text-slate-500 italic">Nenhum registro de histórico.</p>
                           ) : (
@@ -1330,7 +1299,7 @@ export default function ListaChamados() {
                           )}
                         </div>
                       )}
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
