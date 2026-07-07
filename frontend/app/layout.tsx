@@ -12,7 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="flex-shrink-0">
             <Sidebar />
           </div>
-          <main className="flex-1 overflow-y-auto bg-[var(--background)] rounded-2xl">
+          <main className="flex-1 min-h-0 overflow-y-auto bg-[var(--background)] rounded-2xl">
             {children}
           </main>
         </div>

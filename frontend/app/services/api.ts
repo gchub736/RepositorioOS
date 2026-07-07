@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+// Base da API centralizada e configurável por ambiente (fallback para o dev local).
+const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL,
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
