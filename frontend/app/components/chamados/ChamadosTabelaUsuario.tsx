@@ -20,7 +20,7 @@ export default function ChamadosTabelaUsuario({
 }: Props) {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-300 dark:border-slate-800 overflow-auto max-w-full flex-1 min-h-0">
-      <table className="w-full text-left text-[11px] table-fixed">
+      <table className="w-full min-w-[640px] text-left text-[11px] table-fixed">
         <thead className="bg-blue-900 text-white font-bold uppercase text-[10px] tracking-widest">
           <tr>
             <th className="sticky top-0 z-10 bg-blue-900 px-4 py-3 rounded-tl-lg w-[45%]">Chamado</th>

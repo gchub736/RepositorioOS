@@ -97,6 +97,22 @@ export default function Sidebar() {
     setInitialized(true);
   }, [pathname, initialized]);
 
+  // Responsivo: em telas menores (< lg) força o modo recolhido (trilho de ícones),
+  // reutilizando a preferência salva ao voltar para o desktop.
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1023px)');
+    const aplicar = () => {
+      if (mq.matches) {
+        setIsCollapsed(true);
+      } else {
+        setIsCollapsed(localStorage.getItem('sidebarCollapsed') === 'true');
+      }
+    };
+    aplicar();
+    mq.addEventListener('change', aplicar);
+    return () => mq.removeEventListener('change', aplicar);
+  }, []);
+
   // 3. Notificações Polling e Eventos (Separado da inicialização para não ser limpo prematuramente)
   useEffect(() => {
     if (pathname === '/login') return;

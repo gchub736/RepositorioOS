@@ -6,6 +6,10 @@ import api from "./api";
 export const listarOrdens = (params: Record<string, any>) =>
   api.get("/ordens", { params });
 
+// Cria uma nova ordem de serviço (multipart, pois pode conter anexo).
+export const criarOrdem = (dados: FormData) =>
+  api.post("/ordens", dados, { headers: { "Content-Type": "multipart/form-data" } });
+
 export const obterOrdem = (id: number | string) => api.get(`/ordens/${id}`);
 
 // Atualiza a ordem. Com anexo usa POST + _method=PUT (multipart); sem anexo, PUT JSON.

@@ -1,5 +1,6 @@
 "use client";
 import { Trash2 } from "lucide-react";
+import { formatarCpf } from "../../lib/formatters";
 import { Usuario } from "../../types";
 
 interface Props {
@@ -20,7 +21,7 @@ export default function UsuariosTabela({
 }: Props) {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-300 dark:border-slate-800 overflow-auto max-w-full flex-1 min-h-0">
-      <table className="w-full text-left text-[11px] table-fixed">
+      <table className="w-full min-w-[720px] text-left text-[11px] table-fixed">
         <thead className="bg-blue-900 text-white font-bold uppercase text-[10px] tracking-widest">
           <tr>
             <th className="sticky top-0 z-10 bg-blue-900 px-3 py-3 w-[8%] text-center">ID</th>
@@ -66,7 +67,7 @@ export default function UsuariosTabela({
                     </span>
                   </td>
                   <td className="px-3 py-3 overflow-hidden align-middle text-[11px] text-slate-600 dark:text-slate-300">
-                    {user.cpf}
+                    {formatarCpf(user.cpf)}
                   </td>
                   <td className="px-3 py-3 text-center align-middle">
                     <span

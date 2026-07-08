@@ -7,3 +7,4 @@ export * from "./useComentarios";
 export * from "./useChamadoModal";
 export * from "./useNavegacaoTeclado";
 export * from "./useUsuarios";
+export * from "./useNovoChamado";
