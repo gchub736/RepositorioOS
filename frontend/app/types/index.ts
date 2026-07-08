@@ -91,3 +91,5 @@ export interface AnexoPreview {
 export type SlaStatus = "ok" | "alerta" | "vencido" | "pausado" | null;
 
 export type AbaModal = "comentarios" | "historico";
+
+export type AbaConfig = "perfil" | "sistema";

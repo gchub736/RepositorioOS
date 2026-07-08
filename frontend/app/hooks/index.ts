@@ -8,3 +8,4 @@ export * from "./useChamadoModal";
 export * from "./useNavegacaoTeclado";
 export * from "./useUsuarios";
 export * from "./useNovoChamado";
+export * from "./useConfiguracoes";

@@ -33,6 +33,21 @@ export const slaLabel: Record<string, string> = {
 export const badgeCorPadrao =
   "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400";
 
+// Classes reutilizadas dos formulários (Novo Chamado, Configurações).
+export const formInputClass =
+  "w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-400/55 dark:border-slate-700 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500";
+// Variante de altura fixa para campos de linha única (iguala select e input).
+export const formControlClass = `${formInputClass} h-[46px]`;
+// Label preta (mesmo tom do título), boa legibilidade.
+export const formLabelClass =
+  "text-[10px] font-bold text-slate-800 dark:text-white uppercase tracking-widest";
+// Sub-cabeçalho de seção dentro de um formulário (um pouco mais leve que a label).
+export const formSecaoClass =
+  "text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest";
+// Card branco padrão que envolve os formulários.
+export const formCardClass =
+  "bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-300 dark:border-slate-800 p-5 md:p-6 flex-1 min-h-0 overflow-y-auto";
+
 // Classes reutilizadas de inputs/selects.
 export const selectClass =
   "w-full p-3 mt-1 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-blue-500";

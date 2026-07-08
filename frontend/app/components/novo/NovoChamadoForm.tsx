@@ -1,17 +1,15 @@
 "use client";
 import { type FormEvent } from "react";
+import {
+  formInputClass as inputClass,
+  formControlClass as controlClass,
+  formLabelClass as labelClass,
+} from "../../lib/constantes";
 import { Metadado } from "../../types";
 
 const LIMITE_TITULO = 100;
 const LIMITE_DESCRICAO = 200;
 const LIMITE_LOCALIZACAO = 120;
-
-const inputClass =
-  "w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-400/55 dark:border-slate-700 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500";
-// Campos de linha única com altura fixa idêntica (select e input renderizam alturas
-// levemente diferentes por padrão do navegador; h-[46px] iguala os dois).
-const controlClass = `${inputClass} h-[46px]`;
-const labelClass = "text-[10px] font-bold text-slate-800 dark:text-white uppercase tracking-widest";
 
 // Asterisco vermelho para campos obrigatórios.
 const Obrigatorio = () => <span className="text-red-500">*</span>;
