@@ -38,8 +38,8 @@ export default function EsqueciSenhaForm({
       {erro && <AlertaAuth tipo="erro">{erro}</AlertaAuth>}
 
       <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-5">
-        Informe o CPF da sua conta. Se ele estiver cadastrado, enviaremos um link para você
-        criar uma nova senha.
+        Informe o CPF da sua conta. Se ele estiver cadastrado, enviaremos um link via email
+        para você criar uma nova senha.
       </p>
 
       <form onSubmit={onSubmit} className="space-y-4">

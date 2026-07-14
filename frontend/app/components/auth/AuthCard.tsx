@@ -11,8 +11,17 @@ interface Props {
 // esqueci a senha e redefinir senha), garantindo o mesmo padrão nas quatro.
 export default function AuthCard({ titulo, subtitulo, children, rodape }: Props) {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-slate-100 dark:bg-slate-950 p-4">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-300 dark:border-slate-800 overflow-hidden">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 relative bg-slate-100 dark:bg-slate-950">
+      {/* Imagem de fundo (decorativa) */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url('/fundo-login.png')" }}
+        aria-hidden="true"
+      />
+      {/* Véu escuro só no tema escuro: a imagem é clara e brigaria com o dark mode */}
+      <div className="absolute inset-0 bg-transparent dark:bg-slate-950/85" aria-hidden="true" />
+
+      <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-300 dark:border-slate-800 overflow-hidden">
         {/* Faixa navy, no mesmo padrão do modal e do popover de notificações */}
         <div className="bg-[#1e3a8a] px-8 py-6 text-center">
           <h1 className="text-xl font-black text-white uppercase tracking-tighter">{titulo}</h1>
