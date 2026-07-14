@@ -231,7 +231,8 @@ CREATE TABLE core.ordem_servicos (
     tempo_pausado_minutos integer DEFAULT 0 NOT NULL,
     ativo boolean DEFAULT true NOT NULL,
     criado_em timestamp without time zone DEFAULT now() NOT NULL,
-    atualizado_em timestamp without time zone DEFAULT now() NOT NULL
+    atualizado_em timestamp without time zone DEFAULT now() NOT NULL,
+    fechado_em timestamp without time zone
 )
 WITH (autovacuum_vacuum_scale_factor='0.02', autovacuum_analyze_scale_factor='0.01', autovacuum_vacuum_threshold='100', autovacuum_analyze_threshold='50');
 
@@ -873,6 +874,13 @@ CREATE INDEX idx_historico_usuario ON core.historico_os USING btree (usuario_id)
 --
 
 CREATE INDEX idx_os_ativo ON core.ordem_servicos USING btree (ativo);
+
+
+--
+-- Name: idx_os_fechado_em; Type: INDEX; Schema: core; Owner: -
+--
+
+CREATE INDEX idx_os_fechado_em ON core.ordem_servicos USING btree (fechado_em);
 
 
 --

@@ -31,9 +31,10 @@ class OrdemServico extends Model
         'motivo_pausa',
         'pausado_em',
         'tempo_pausado_minutos',
-        'codigo_rastreio', 
+        'codigo_rastreio',
         'anexo',
         'fixada',
+        'fechado_em',
     ];
 
     protected $appends = [
@@ -48,6 +49,7 @@ class OrdemServico extends Model
 
     protected $casts = [
         'pausado_em' => 'datetime',
+        'fechado_em' => 'datetime',
     ];
 
     /**

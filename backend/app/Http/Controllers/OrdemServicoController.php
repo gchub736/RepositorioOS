@@ -54,6 +54,13 @@ class OrdemServicoController extends Controller
                 description: "Filtrar por status do SLA (ok, alerta, vencido, pausado)",
                 required: false,
                 schema: new OA\Schema(type: "string", enum: ["ok", "alerta", "vencido", "pausado"])
+            ),
+            new OA\Parameter(
+                name: "sem_tecnico",
+                in: "query",
+                description: "Retorna apenas chamados pendentes de atribuição (sem técnico e não fechados). Mesma definição da métrica 'sem_tecnico' do dashboard.",
+                required: false,
+                schema: new OA\Schema(type: "boolean")
             )
         ],
         responses: [
@@ -176,6 +183,15 @@ class OrdemServicoController extends Controller
             if ($request->filled('tecnico_id')) {
                 $query->where('tecnico_id', $request->tecnico_id);
             }
+        }
+
+        // Chamados pendentes de atribuição (usado pelo drill-down do dashboard).
+        // Usa a MESMA definição da métrica "sem_tecnico" do DashboardController:
+        // sem técnico E ainda não fechado — senão o número do card não bateria
+        // com a lista aberta ao clicar nele.
+        if ($request->boolean('sem_tecnico')) {
+            $query->whereNull('tecnico_id')
+                ->whereHas('status', fn($q) => $q->where('nome', '!=', 'Fechado'));
         }
 
         // GIN INDEX: Busca otimizada usando Trigramas no Postgres
@@ -449,6 +465,14 @@ class OrdemServicoController extends Controller
                 $dados['pausado_em'] = null;
                 $dados['motivo_pausa'] = null;
             }
+        }
+
+        // Carimbo de fechamento: usado para calcular o tempo de resolução.
+        // Só marca na transição para 'Fechado'; se a OS for reaberta, limpa.
+        if ($statusNovo === 'Fechado' && $statusAntigo !== 'Fechado') {
+            $dados['fechado_em'] = now();
+        } elseif ($statusNovo !== 'Fechado' && $statusAntigo === 'Fechado') {
+            $dados['fechado_em'] = null;
         }
 
         $usuarioLogado = $request->user();

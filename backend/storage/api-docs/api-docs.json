@@ -94,8 +94,26 @@
                     "Dashboard"
                 ],
                 "summary": "Retorna dados estatísticos do sistema",
-                "description": "Acesso restrito: Apenas usuários com permissão 'dashboard.visualizar' ou cargo Admin.",
+                "description": "Acesso restrito: Apenas usuários com permissão 'dashboard.visualizar' ou cargo Admin. Aceita o filtro opcional `periodo` (em dias) que recorta as métricas pelos chamados criados no intervalo.",
                 "operationId": "280207991833169165fa89055b977585",
+                "parameters": [
+                    {
+                        "name": "periodo",
+                        "in": "query",
+                        "description": "Recorte das métricas em dias (chamados criados no período). Use 0 para todo o histórico.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0,
+                            "enum": [
+                                0,
+                                7,
+                                30,
+                                90
+                            ]
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Estatísticas geradas com sucesso",
@@ -105,6 +123,10 @@
                                     "properties": {
                                         "data": {
                                             "properties": {
+                                                "periodo": {
+                                                    "description": "Período aplicado, em dias (0 = tudo)",
+                                                    "type": "integer"
+                                                },
                                                 "geral": {
                                                     "properties": {
                                                         "total": {
@@ -134,6 +156,21 @@
                                                             "type": "integer"
                                                         },
                                                         "vencido": {
+                                                            "type": "integer"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "tempo_medio_resolucao": {
+                                                    "description": "Tempo médio entre a abertura e o fechamento, descontando o tempo pausado.",
+                                                    "properties": {
+                                                        "horas": {
+                                                            "description": "Média em horas (null se não houver amostra)",
+                                                            "type": "number",
+                                                            "nullable": true
+                                                        },
+                                                        "amostra": {
+                                                            "description": "Quantidade de chamados fechados considerados",
                                                             "type": "integer"
                                                         }
                                                     },
@@ -169,8 +206,14 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
                     "403": {
                         "description": "Acesso negado"
+                    },
+                    "422": {
+                        "description": "Período inválido"
                     }
                 },
                 "security": [
@@ -320,6 +363,15 @@
                                 "vencido",
                                 "pausado"
                             ]
+                        }
+                    },
+                    {
+                        "name": "sem_tecnico",
+                        "in": "query",
+                        "description": "Retorna apenas chamados pendentes de atribuição (sem técnico e não fechados). Mesma definição da métrica 'sem_tecnico' do dashboard.",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
                         }
                     }
                 ],

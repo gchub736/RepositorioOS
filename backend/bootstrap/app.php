@@ -18,6 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'cargo' => \App\Http\Middleware\CheckPermissao::class,
             'validate-jti' => \App\Http\Middleware\ValidateJtiToken::class,
         ]);
+
+        // Aplicação é somente API: convidado nunca é redirecionado.
+        // Sem isso, o middleware Authenticate tenta route('login') (inexistente) e
+        // estoura 500 antes do handler de AuthenticationException devolver o 401.
+        $middleware->redirectGuestsTo(fn (Request $request) => null);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(function (Request $request, \Throwable $e) {
