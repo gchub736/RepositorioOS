@@ -17,6 +17,10 @@ export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
 
+  // Rotas públicas de autenticação (login, cadastro, recuperar/redefinir senha).
+  // A sidebar não aparece nelas e não deve buscar perfil/notificações (sem token).
+  const isRotaAuth = pathname?.startsWith('/login') ?? false;
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
@@ -44,7 +48,7 @@ export default function Sidebar() {
   }, [showNotificacoes]);
 
   const fetchNotificacoes = () => {
-    if (pathname === '/login') return;
+    if (isRotaAuth) return;
     api.get('/notificacoes')
       .then(res => {
         setNotificacoes(res.data || []);
@@ -56,7 +60,7 @@ export default function Sidebar() {
 
   // 1. Inicialização (Roda quando sai da tela de login)
   useEffect(() => {
-    if (pathname === '/login') {
+    if (isRotaAuth) {
       setInitialized(false);
       return;
     }
@@ -115,7 +119,7 @@ export default function Sidebar() {
 
   // 3. Notificações Polling e Eventos (Separado da inicialização para não ser limpo prematuramente)
   useEffect(() => {
-    if (pathname === '/login') return;
+    if (isRotaAuth) return;
 
     fetchNotificacoes();
     const interval = setInterval(fetchNotificacoes, 30000);
@@ -134,7 +138,7 @@ export default function Sidebar() {
 
   // 2. Proteção de rotas instantânea por pathname (Zero chamadas de rede no clique)
   useEffect(() => {
-    if (pathname === '/login') return;
+    if (isRotaAuth) return;
 
     // Esconde o popover de notificações ao mudar de página
     setShowNotificacoes(false);
@@ -196,7 +200,7 @@ export default function Sidebar() {
     router.push('/login');
   };
 
-  if (pathname === '/login') return null;
+  if (isRotaAuth) return null;
 
   const unreadCount = notificacoes.filter((n: any) => !n.lida).length;
 

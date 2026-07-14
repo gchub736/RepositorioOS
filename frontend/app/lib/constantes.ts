@@ -47,6 +47,14 @@ export const modalLabelClass = "text-xs font-bold text-slate-800 dark:text-white
 // Sub-cabeçalho de seção dentro de um formulário (um pouco mais leve que a label).
 export const formSecaoClass =
   "text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest";
+// Classes das telas de autenticação (login, cadastro, recuperação de senha).
+export const authInputClass =
+  "w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-400/55 dark:border-slate-700 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500";
+export const authLabelClass =
+  "text-[10px] font-bold text-slate-800 dark:text-white uppercase tracking-widest";
+export const authBotaoClass =
+  "w-full mt-2 py-3 rounded-lg bg-[#1e3a8a] hover:bg-[#162e6e] text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-[#1e3a8a]/20 transition-all disabled:opacity-70 disabled:cursor-not-allowed";
+
 // Card branco padrão que envolve os formulários.
 export const formCardClass =
   "bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-300 dark:border-slate-800 p-5 md:p-6 flex-1 min-h-0 overflow-y-auto";

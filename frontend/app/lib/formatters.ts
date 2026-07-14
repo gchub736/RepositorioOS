@@ -18,6 +18,16 @@ export const formatarDuracaoHoras = (horas: number | null | undefined): string =
   return resto > 0 ? `${dias}d ${resto}h` : `${dias}d`;
 };
 
+// Máscara progressiva para digitação: vai formatando conforme o usuário digita
+// (diferente de formatarCpf, que só formata o CPF já completo).
+export const mascararCpf = (valor: string): string => {
+  const d = (valor || "").replace(/\D/g, "").slice(0, 11);
+  if (d.length <= 3) return d;
+  if (d.length <= 6) return `${d.slice(0, 3)}.${d.slice(3)}`;
+  if (d.length <= 9) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`;
+  return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
+};
+
 export const formatarCpf = (cpf: string | undefined | null): string => {
   const digitos = (cpf || "").replace(/\D/g, "");
   if (digitos.length !== 11) return cpf || "";

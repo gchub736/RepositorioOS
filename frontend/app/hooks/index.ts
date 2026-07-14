@@ -10,3 +10,6 @@ export * from "./useUsuarios";
 export * from "./useNovoChamado";
 export * from "./useConfiguracoes";
 export * from "./useEstatisticas";
+export * from "./useLogin";
+export * from "./useEsqueciSenha";
+export * from "./useResetarSenha";
