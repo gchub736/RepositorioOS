@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { ClipboardList, UserPlus, Users, BarChart3, Settings, LogOut, Sun, Moon, ChevronLeft, Menu, Bell } from 'lucide-react';
+import { ClipboardList, UserPlus, Users, BarChart3, Settings, LogOut, Sun, Moon, ChevronLeft, Menu, Bell, CheckCheck } from 'lucide-react';
 import api from '../services/api';
 
 export default function Sidebar() {
@@ -215,12 +215,15 @@ export default function Sidebar() {
   const isActive = (href: string) => pathname === href;
 
   return (
+    // Sem `overflow-hidden` na aside: o popover de notificações é filho dela e fica
+    // posicionado fora dos seus limites (left-full), então seria recortado. Quem
+    // arredonda os cantos são as camadas internas.
     <aside
-      className={`${isCollapsed ? 'w-14' : 'w-[220px]'} transition-all duration-300 flex-shrink-0 flex flex-col h-full relative z-20 rounded-2xl overflow-hidden`}
+      className={`${isCollapsed ? 'w-14' : 'w-[220px]'} transition-all duration-300 flex-shrink-0 flex flex-col h-full relative z-20 rounded-2xl`}
     >
       {/* ===== CAMADA BASE (z-0): Gradiente Navy Escuro ===== */}
       <div
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-0 rounded-2xl"
         style={{
           background: 'linear-gradient(180deg, #1e3a8a 0%, #020617 100%)',
         }}
@@ -333,29 +336,45 @@ export default function Sidebar() {
 
         {/* --- Popover de Notificações --- */}
         {showNotificacoes && (
-          <div ref={popoverRef} className="absolute left-full top-16 ml-2 w-80 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 flex flex-col max-h-96 overflow-hidden animate-in fade-in slide-in-from-left-2 duration-200">
-            <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30">
-              <h3 className="text-xs font-black text-slate-800 dark:text-white uppercase tracking-wider">
-                Notificações {unreadCount > 0 && `(${unreadCount})`}
-              </h3>
+          <div ref={popoverRef} className="absolute left-full top-16 ml-2 w-[340px] bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-2xl shadow-2xl z-50 flex flex-col max-h-96 overflow-hidden animate-in fade-in slide-in-from-left-2 duration-200">
+            {/* Cabeçalho azul, no mesmo padrão do modal de chamado */}
+            <div className="bg-[#1e3a8a] px-4 py-3 flex justify-between items-center gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <Bell size={14} className="text-blue-200 flex-shrink-0" />
+                <h3 className="text-xs font-black text-white uppercase tracking-widest">
+                  Notificações
+                </h3>
+                {unreadCount > 0 && (
+                  <span className="flex-shrink-0 bg-white/20 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full">
+                    {unreadCount}
+                  </span>
+                )}
+              </div>
               {unreadCount > 0 && (
                 <button
                   onClick={marcarTodasComoLidas}
-                  className="text-[10px] text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-bold uppercase tracking-wider"
+                  title="Marcar todas como lidas"
+                  className="flex items-center gap-1 text-[10px] text-blue-200 hover:text-white font-bold uppercase tracking-wider transition-colors flex-shrink-0"
                 >
+                  <CheckCheck size={13} />
                   Marcar todas
                 </button>
               )}
             </div>
-            <div className="flex-1 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+
+            <div className="flex-1 overflow-y-auto divide-y divide-slate-200 dark:divide-slate-800 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {notificacoes.length === 0 ? (
-                <div className="p-6 text-center text-xs text-slate-400 dark:text-slate-500 italic">
-                  Nenhuma notificação por enquanto.
+                <div className="p-8 flex flex-col items-center justify-center text-center gap-2">
+                  <Bell size={22} className="text-slate-300 dark:text-slate-700" />
+                  <p className="text-xs text-slate-500 dark:text-slate-400 italic">
+                    Nenhuma notificação por enquanto.
+                  </p>
                 </div>
               ) : (
                 notificacoes.map((n: any) => (
-                  <div
+                  <button
                     key={n.id}
+                    type="button"
                     onClick={async () => {
                       if (!n.lida) await marcarComoLida(n.id);
                       setShowNotificacoes(false);
@@ -363,26 +382,27 @@ export default function Sidebar() {
                         router.push(`/?abrirChamado=${n.ordem_servico_id}`);
                       }
                     }}
-                    className={`p-4 transition-colors cursor-pointer text-left ${!n.lida
-                        ? 'bg-blue-50/30 dark:bg-blue-900/5 hover:bg-blue-50/50 dark:hover:bg-blue-900/10'
-                        : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                    // Barra azul à esquerda destaca as não lidas.
+                    className={`w-full text-left px-4 py-3 transition-colors border-l-[3px] ${!n.lida
+                        ? 'border-l-blue-600 bg-blue-50/70 dark:bg-blue-900/10 hover:bg-blue-100/70 dark:hover:bg-blue-900/20'
+                        : 'border-l-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50'
                       }`}
                   >
                     <div className="flex justify-between items-start gap-2">
-                      <span className={`text-[10px] font-black uppercase tracking-wider ${!n.lida ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                      <span className={`text-[10px] font-black uppercase tracking-wider ${!n.lida ? 'text-blue-700 dark:text-blue-400' : 'text-slate-500 dark:text-slate-500'}`}>
                         {n.titulo}
                       </span>
                       {!n.lida && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-1" />
+                        <span className="w-2 h-2 rounded-full bg-blue-600 flex-shrink-0 mt-0.5" />
                       )}
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 font-medium leading-relaxed">
+                    <p className="text-xs text-slate-700 dark:text-slate-300 mt-1 font-medium leading-relaxed">
                       {n.mensagem}
                     </p>
-                    <span className="text-[9px] text-slate-400 dark:text-slate-500 block mt-1">
+                    <span className="text-[9px] text-slate-500 dark:text-slate-500 block mt-1.5 font-medium">
                       {new Date(n.criado_em).toLocaleString('pt-BR')}
                     </span>
-                  </div>
+                  </button>
                 ))
               )}
             </div>
@@ -390,7 +410,7 @@ export default function Sidebar() {
         )}
 
         {/* ===== CAMADA 2 (z-1): Painel Acinzentado da Navegação ===== */}
-        <div className="flex-1 flex flex-col rounded-t-2xl bg-white/[0.07] border-t-[3px] border-[#172554] overflow-hidden">
+        <div className="flex-1 flex flex-col rounded-t-2xl rounded-b-2xl bg-white/[0.07] border-t-[3px] border-[#172554] overflow-hidden">
           <nav className={`flex-1 space-y-0.5 ${isCollapsed ? 'px-1.5' : 'px-2'} py-2`}>
             {navItems
               .filter(item => item.roles.includes(cargo) || !cargo)

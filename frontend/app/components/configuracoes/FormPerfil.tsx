@@ -1,6 +1,7 @@
 "use client";
 import { type FormEvent } from "react";
 import AlertaSucesso from "./AlertaSucesso";
+import InputSenha from "../InputSenha";
 import {
   formInputClass as inputClass,
   formLabelClass as labelClass,
@@ -60,23 +61,15 @@ export default function FormPerfil({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className={labelClass}>Senha Atual</label>
-              <input
-                className={inputClass}
-                type="password"
-                placeholder="••••••••"
+              <InputSenha
                 value={senhaAtual}
-                onChange={(e) => setSenhaAtual(e.target.value)}
+                onChange={setSenhaAtual}
+                autoComplete="current-password"
               />
             </div>
             <div className="space-y-1.5">
               <label className={labelClass}>Nova Senha</label>
-              <input
-                className={inputClass}
-                type="password"
-                placeholder="••••••••"
-                value={novaSenha}
-                onChange={(e) => setNovaSenha(e.target.value)}
-              />
+              <InputSenha value={novaSenha} onChange={setNovaSenha} autoComplete="new-password" />
             </div>
           </div>
         </div>

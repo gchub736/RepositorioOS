@@ -9,3 +9,4 @@ export * from "./useNavegacaoTeclado";
 export * from "./useUsuarios";
 export * from "./useNovoChamado";
 export * from "./useConfiguracoes";
+export * from "./useEstatisticas";

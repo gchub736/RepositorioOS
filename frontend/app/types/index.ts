@@ -79,6 +79,7 @@ export interface Filtros {
   urgencia: string;
   prioridade: string;
   sla: string;
+  sem_tecnico: boolean; // pendentes de atribuição (drill-down do dashboard)
   page: number;
   per_page: number;
 }
@@ -93,3 +94,47 @@ export type SlaStatus = "ok" | "alerta" | "vencido" | "pausado" | null;
 export type AbaModal = "comentarios" | "historico";
 
 export type AbaConfig = "perfil" | "sistema";
+
+// --- Estatísticas (dashboard) ---
+export interface EstatisticasGeral {
+  total: number;
+  resolvidos: number;
+  abertos: number;
+  perc_resolvidos: number;
+  sem_tecnico: number;
+}
+export interface TopTecnico {
+  id: number;
+  nome: string;
+  resolvidos: number;
+}
+export interface EstatisticaCategoria {
+  categoria: string;
+  abertos: number;
+  resolvidos: number;
+}
+export interface EstatisticaSla {
+  ok: number;
+  alerta: number;
+  vencido: number;
+}
+export interface EstatisticaPrioridade {
+  prioridade: string;
+  abertos: number;
+}
+export interface TempoMedioResolucao {
+  horas: number | null;
+  amostra: number;
+}
+export interface Estatisticas {
+  periodo: number;
+  geral: EstatisticasGeral;
+  top_tecnicos: TopTecnico[];
+  categorias: EstatisticaCategoria[];
+  sla: EstatisticaSla;
+  prioridades: EstatisticaPrioridade[];
+  tempo_medio_resolucao: TempoMedioResolucao;
+}
+
+// Períodos aceitos pelo dashboard (em dias; 0 = todo o histórico).
+export type PeriodoEstatisticas = 0 | 7 | 30 | 90;

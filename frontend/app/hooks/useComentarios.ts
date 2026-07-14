@@ -18,6 +18,8 @@ export function useComentarios(
   const [comentarioEditandoId, setComentarioEditandoId] = useState<number | null>(null);
   const [comentarioEditandoConteudo, setComentarioEditandoConteudo] = useState("");
   const [comentarioRespondendo, setComentarioRespondendo] = useState<Comentario | null>(null);
+  // Comentário aguardando confirmação de exclusão (abre o diálogo de opções).
+  const [comentarioExcluindo, setComentarioExcluindo] = useState<Comentario | null>(null);
   const inputComentarioRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -62,17 +64,21 @@ export function useComentarios(
     }
   };
 
+  // A confirmação agora é feita por um diálogo próprio (Excluir para mim / para todos /
+  // cancelar), então aqui a exclusão é executada direto.
   const deletarComentario = async (id: number, tipo: "mim" | "todos") => {
     if (!chamado) return;
-    if (confirm(`Deseja excluir este comentário para ${tipo === "todos" ? "todos" : "você"}?`)) {
-      try {
-        await removerComentario(chamado.id, id, tipo);
-        await recarregar(chamado.id);
-      } catch (err) {
-        alert("Erro ao excluir comentário.");
-      }
+    try {
+      await removerComentario(chamado.id, id, tipo);
+      setComentarioExcluindo(null);
+      await recarregar(chamado.id);
+    } catch (err) {
+      alert("Erro ao excluir comentário.");
     }
   };
+
+  const pedirExclusao = (c: Comentario) => setComentarioExcluindo(c);
+  const cancelarExclusao = () => setComentarioExcluindo(null);
 
   const iniciarEdicao = (c: Comentario) => {
     setComentarioEditandoId(c.id);
@@ -89,6 +95,9 @@ export function useComentarios(
     setComentarioEditandoConteudo,
     comentarioRespondendo,
     setComentarioRespondendo,
+    comentarioExcluindo,
+    pedirExclusao,
+    cancelarExclusao,
     inputComentarioRef,
     enviarComentario,
     salvarEdicaoComentario,

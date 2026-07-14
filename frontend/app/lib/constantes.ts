@@ -41,12 +41,31 @@ export const formControlClass = `${formInputClass} h-[46px]`;
 // Label preta (mesmo tom do título), boa legibilidade.
 export const formLabelClass =
   "text-[10px] font-bold text-slate-800 dark:text-white uppercase tracking-widest";
+// Label dos campos do modal de chamado (mesmo tom preto das demais telas,
+// mantendo o tamanho text-xs já usado no modal).
+export const modalLabelClass = "text-xs font-bold text-slate-800 dark:text-white uppercase";
 // Sub-cabeçalho de seção dentro de um formulário (um pouco mais leve que a label).
 export const formSecaoClass =
   "text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest";
 // Card branco padrão que envolve os formulários.
 export const formCardClass =
   "bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-300 dark:border-slate-800 p-5 md:p-6 flex-1 min-h-0 overflow-y-auto";
+
+// Card de métrica (tela de estatísticas).
+export const statCardClass =
+  "bg-white dark:bg-slate-900 p-4 rounded-lg shadow-sm border border-slate-300 dark:border-slate-800 flex flex-col";
+// Título dentro de um card de métrica.
+export const statTituloClass =
+  "text-[10px] md:text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-3 tracking-widest";
+
+// Cor do marcador de prioridade (tela de estatísticas).
+export const prioridadeCor: Record<string, string> = {
+  Baixa: "bg-blue-500",
+  Media: "bg-orange-500",
+  Alta: "bg-red-500",
+  "Muito Alta": "bg-red-700",
+  Critica: "bg-red-900",
+};
 
 // Classes reutilizadas de inputs/selects.
 export const selectClass =

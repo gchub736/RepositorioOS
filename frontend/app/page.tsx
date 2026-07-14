@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 import {
@@ -30,6 +30,18 @@ export default function ListaChamados() {
 
   const { cargo, meuUsuarioId } = usePerfil();
   const { categorias, statusList, urgenciasList } = useMetadados();
+
+  // Drill-down vindo do dashboard: abre a listagem já filtrada (ex.: /?sla=vencido).
+  // Lido só na montagem — depois o usuário controla os filtros pela própria tela.
+  const filtrosIniciais = useMemo(
+    () => ({
+      ...(searchParams.get("sla") ? { sla: searchParams.get("sla") as string } : {}),
+      ...(searchParams.get("sem_tecnico") === "1" ? { sem_tecnico: true } : {}),
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
   const {
     ordens,
     meta,
@@ -40,7 +52,7 @@ export default function ListaChamados() {
     deletarChamado,
     fixarChamado,
     exportarCSV,
-  } = useChamados();
+  } = useChamados(filtrosIniciais);
 
   const modal = useChamadoModal({ cargo, statusList, onSaved: buscarChamados });
 

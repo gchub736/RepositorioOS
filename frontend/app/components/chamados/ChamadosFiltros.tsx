@@ -1,4 +1,5 @@
 "use client";
+import { X } from "lucide-react";
 import { filterClass } from "../../lib/constantes";
 import { Filtros, Metadado } from "../../types";
 
@@ -87,10 +88,34 @@ export default function ChamadosFiltros({
         <option value={50}>50 por página</option>
         <option value={100}>100 por página</option>
       </select>
-      {((cargo !== "Usuario" && (filtros.status || filtros.urgencia)) || filtros.categoria) && (
+      {/* Chip do drill-down "pendentes de atribuição": sem isso o usuário veria a lista
+          filtrada sem saber o porquê nem como limpar (não há select para esse filtro). */}
+      {filtros.sem_tecnico && (
+        <button
+          onClick={() => setFiltros({ ...filtros, sem_tecnico: false, page: 1 })}
+          title="Remover filtro"
+          className="flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-bold bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 hover:bg-orange-200 dark:hover:bg-orange-900/50 transition-colors"
+        >
+          Pendentes de atribuição
+          <X size={13} />
+        </button>
+      )}
+
+      {((cargo !== "Usuario" && (filtros.status || filtros.urgencia || filtros.sla)) ||
+        filtros.categoria ||
+        filtros.sem_tecnico) && (
         <button
           onClick={() =>
-            setFiltros({ ...filtros, status: "", categoria: "", urgencia: "", page: 1, per_page: 15 })
+            setFiltros({
+              ...filtros,
+              status: "",
+              categoria: "",
+              urgencia: "",
+              sla: "",
+              sem_tecnico: false,
+              page: 1,
+              per_page: 15,
+            })
           }
           className="text-xs font-bold text-red-400 hover:text-red-600 px-3"
         >

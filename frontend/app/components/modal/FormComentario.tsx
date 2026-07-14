@@ -28,7 +28,7 @@ export default function FormComentario({ controle }: { controle: ComentariosCont
           <button
             type="button"
             onClick={() => setComentarioRespondendo(null)}
-            className="absolute top-2 right-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            className="absolute top-2 right-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path

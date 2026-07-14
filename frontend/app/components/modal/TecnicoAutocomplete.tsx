@@ -1,5 +1,5 @@
 "use client";
-import { selectClass } from "../../lib/constantes";
+import { selectClass, modalLabelClass } from "../../lib/constantes";
 import { TecnicoBusca } from "../../hooks/useTecnicoBusca";
 
 // Campo de busca (autocomplete) de técnico. Toda a lógica de busca/estado vem do hook
@@ -19,7 +19,7 @@ export default function TecnicoAutocomplete({ tecnico }: { tecnico: TecnicoBusca
 
   return (
     <div className="relative" ref={tecnicoDropdownRef}>
-      <label className="text-xs font-bold text-slate-400 uppercase">Técnico</label>
+      <label className={modalLabelClass}>Técnico</label>
       <input
         type="text"
         value={tecnicoBusca}

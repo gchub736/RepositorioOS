@@ -12,7 +12,7 @@ export default function PainelSla({ os }: { os: Ordem }) {
   return (
     <div className={`p-4 rounded-xl border ${bgClass} mb-6 flex flex-col gap-1.5`}>
       <div className="flex justify-between items-center">
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Controle de SLA</span>
+        <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Controle de SLA</span>
         <span
           className={`text-[9px] font-black uppercase px-2 py-1 rounded ${
             statusSla === "vencido"

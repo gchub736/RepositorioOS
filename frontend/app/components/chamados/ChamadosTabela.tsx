@@ -94,10 +94,10 @@ export default function ChamadosTabela({
                         {os.anexo_url && (
                           <button
                             onClick={() => onPreviewAnexo({ url: os.anexo_url as string, osId: os.id })}
-                            className="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded text-[8px] font-bold uppercase flex-shrink-0 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                            className="p-1 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/70 flex-shrink-0 transition-colors"
                             title="Ver Anexo"
                           >
-                            <IconeAnexo size={10} />
+                            <IconeAnexo size={13} />
                           </button>
                         )}
                       </div>

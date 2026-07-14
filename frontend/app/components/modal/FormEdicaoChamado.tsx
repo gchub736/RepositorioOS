@@ -1,7 +1,7 @@
 "use client";
 import { type FormEvent } from "react";
 import TecnicoAutocomplete from "./TecnicoAutocomplete";
-import { selectClass } from "../../lib/constantes";
+import { selectClass, modalLabelClass } from "../../lib/constantes";
 import { TecnicoBusca } from "../../hooks/useTecnicoBusca";
 import { AnexoPreview, Metadado, Ordem } from "../../types";
 
@@ -49,7 +49,7 @@ export default function FormEdicaoChamado({
         <>
           <TecnicoAutocomplete tecnico={tecnico} />
           <div>
-            <label className="text-xs font-bold text-slate-400 uppercase">Urgência</label>
+            <label className={modalLabelClass}>Urgência</label>
             <select
               value={urgencia}
               onChange={(e) => setUrgencia(e.target.value)}
@@ -65,7 +65,7 @@ export default function FormEdicaoChamado({
         </>
       )}
       <div>
-        <label className="text-xs font-bold text-slate-400 uppercase">Status</label>
+        <label className={modalLabelClass}>Status</label>
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
@@ -102,7 +102,7 @@ export default function FormEdicaoChamado({
       )}
 
       <div>
-        <label className="text-xs font-bold text-slate-400 uppercase">Solução</label>
+        <label className={modalLabelClass}>Solução</label>
         <textarea
           value={solucao}
           onChange={(e) => setSolucao(e.target.value)}
@@ -112,7 +112,7 @@ export default function FormEdicaoChamado({
         />
       </div>
       <div>
-        <label className="text-xs font-bold text-slate-400 uppercase">Anexo</label>
+        <label className={modalLabelClass}>Anexo</label>
         {chamado.anexo_url ? (
           <div className="text-[12px] mt-1.5">
             <button

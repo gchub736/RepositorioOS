@@ -11,19 +11,26 @@ import { Filtros, Meta, Ordem } from "../types";
 
 // Gerencia a listagem de chamados: filtros, dados paginados, busca (com debounce) e
 // ações que recarregam a lista (excluir, fixar, exportar CSV).
-export function useChamados() {
+const FILTROS_INICIAIS: Filtros = {
+  busca: "",
+  status: "",
+  categoria: "",
+  urgencia: "",
+  prioridade: "",
+  sla: "",
+  sem_tecnico: false,
+  page: 1,
+  per_page: 15,
+};
+
+// `filtrosIniciais` permite abrir a tela já filtrada (drill-down vindo do dashboard).
+export function useChamados(filtrosIniciais?: Partial<Filtros>) {
   const [ordens, setOrdens] = useState<Ordem[]>([]);
   const [meta, setMeta] = useState<Meta | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [filtros, setFiltros] = useState<Filtros>({
-    busca: "",
-    status: "",
-    categoria: "",
-    urgencia: "",
-    prioridade: "",
-    sla: "",
-    page: 1,
-    per_page: 15,
+    ...FILTROS_INICIAIS,
+    ...filtrosIniciais,
   });
 
   const buscarChamados = useCallback(async () => {
@@ -46,6 +53,7 @@ export function useChamados() {
       if (filtros.urgencia) params.urgencia = filtros.urgencia;
       if (filtros.prioridade) params.prioridade = filtros.prioridade;
       if (filtros.sla) params.sla = filtros.sla;
+      if (filtros.sem_tecnico) params.sem_tecnico = 1;
 
       // Técnico só vê os próprios chamados (filtro aplicado pelo back).
       if (currentCargo === "Tecnico" && currentUserId) {
@@ -110,6 +118,8 @@ export function useChamados() {
       if (filtros.categoria) params.append("categoria", filtros.categoria);
       if (filtros.urgencia) params.append("urgencia", filtros.urgencia);
       if (filtros.prioridade) params.append("prioridade", filtros.prioridade);
+      if (filtros.sla) params.append("sla", filtros.sla);
+      if (filtros.sem_tecnico) params.append("sem_tecnico", "1");
       params.append("per_page", "1000");
 
       const res = await exportarOrdens(params);

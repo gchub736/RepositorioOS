@@ -1,5 +1,6 @@
 "use client";
 import { SquarePen, Trash2 } from "lucide-react";
+import ConfirmarExclusaoComentario from "./ConfirmarExclusaoComentario";
 import { renderLinks } from "../../lib/renderLinks";
 import { ComentariosControle } from "../../hooks/useComentarios";
 import { Comentario } from "../../types";
@@ -21,12 +22,15 @@ export default function ListaComentarios({ lista, meuUsuarioId, controle }: Prop
     setComentarioRespondendo,
     iniciarEdicao,
     deletarComentario,
+    comentarioExcluindo,
+    pedirExclusao,
+    cancelarExclusao,
   } = controle;
 
   return (
     <div className="flex-1 space-y-3 overflow-y-auto pr-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] mb-2 pb-2">
       {!lista || lista.length === 0 ? (
-        <p className="text-xs text-slate-400 dark:text-slate-500 italic py-4">Nenhuma mensagem enviada.</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 italic py-4">Nenhuma mensagem enviada.</p>
       ) : (
         lista.map((c) => {
           const isMe = String(c.usuario_id) === String(meuUsuarioId);
@@ -37,8 +41,11 @@ export default function ListaComentarios({ lista, meuUsuarioId, controle }: Prop
               key={c.id}
               className={`flex flex-col max-w-[85%] ${isMe ? "ml-auto items-end" : "mr-auto items-start"}`}
             >
-              <span className="text-[9px] font-bold text-slate-400 mb-0.5">
-                {c.usuario_nome} <span className="font-normal">({c.usuario_cargo})</span>
+              <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 mb-0.5">
+                {c.usuario_nome}{" "}
+                <span className="font-medium text-slate-500 dark:text-slate-400">
+                  ({c.usuario_cargo})
+                </span>
               </span>
 
               {isEditing ? (
@@ -92,7 +99,7 @@ export default function ListaComentarios({ lista, meuUsuarioId, controle }: Prop
                     >
                       <button
                         onClick={() => setComentarioRespondendo(c)}
-                        className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-green-500 transition-colors"
+                        className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-600 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
                         title="Responder"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -109,23 +116,16 @@ export default function ListaComentarios({ lista, meuUsuarioId, controle }: Prop
                           {c.pode_editar && (
                             <button
                               onClick={() => iniciarEdicao(c)}
-                              className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-blue-500 transition-colors"
+                              className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                               title="Editar"
                             >
                               <SquarePen size={16} className="w-3.5 h-3.5" />
                             </button>
                           )}
                           <button
-                            onClick={() => deletarComentario(c.id, "mim")}
-                            className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-orange-500 transition-colors"
-                            title="Deletar"
-                          >
-                            <Trash2 size={16} className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => deletarComentario(c.id, "todos")}
-                            className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-red-500 transition-colors"
-                            title="Deletar"
+                            onClick={() => pedirExclusao(c)}
+                            className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-600 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                            title="Excluir mensagem"
                           >
                             <Trash2 size={16} className="w-3.5 h-3.5" />
                           </button>
@@ -134,14 +134,16 @@ export default function ListaComentarios({ lista, meuUsuarioId, controle }: Prop
                     </div>
                   </div>
                   <div className="flex items-center gap-1 mt-0.5">
-                    <span className="text-[8px] text-slate-400 font-medium">
+                    <span className="text-[9px] text-slate-500 dark:text-slate-400 font-medium">
                       {new Date(c.criado_em).toLocaleDateString("pt-BR", {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
                     </span>
                     {c.editado && (
-                      <span className="text-[8px] text-slate-400 font-medium italic">• editado</span>
+                      <span className="text-[9px] text-slate-500 dark:text-slate-400 font-medium italic">
+                        • editado
+                      </span>
                     )}
                   </div>
                 </>
@@ -149,6 +151,14 @@ export default function ListaComentarios({ lista, meuUsuarioId, controle }: Prop
             </div>
           );
         })
+      )}
+
+      {comentarioExcluindo && (
+        <ConfirmarExclusaoComentario
+          comentario={comentarioExcluindo}
+          onExcluir={(tipo) => deletarComentario(comentarioExcluindo.id, tipo)}
+          onCancelar={cancelarExclusao}
+        />
       )}
     </div>
   );
