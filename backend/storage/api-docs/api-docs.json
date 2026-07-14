@@ -954,29 +954,43 @@
             }
         },
         "/api/reset-password/validate": {
-            "get": {
+            "post": {
                 "tags": [
                     "Senha"
                 ],
                 "summary": "Valida se o token de recuperação é válido",
                 "description": "Valida o token de recuperação (verifica se é válido e não expirou).",
-                "operationId": "1ff7504fec37893dccad3bf69ae10254",
-                "parameters": [
-                    {
-                        "name": "token",
-                        "in": "query",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "operationId": "caf413709d81c544a3b2a16b95aa8f34",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "token"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
                         }
                     }
-                ],
+                },
                 "responses": {
                     "200": {
                         "description": "Token válido"
                     },
                     "400": {
                         "description": "Token inválido ou expirado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    },
+                    "429": {
+                        "description": "Muitas tentativas"
                     }
                 }
             }

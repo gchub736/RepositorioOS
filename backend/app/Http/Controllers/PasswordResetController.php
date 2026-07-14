@@ -82,21 +82,26 @@ class PasswordResetController extends Controller
     /**
      * Valida o token de recuperação (verifica se é válido e não expirou).
      */
-    #[OA\Get(
+    // A anotação antes dizia GET com o token na query, mas a rota/método usam POST
+    // com o token no corpo — a doc estava divergindo da implementação real.
+    #[OA\Post(
         path: "/api/reset-password/validate",
         tags: ["Senha"],
         summary: "Valida se o token de recuperação é válido",
-        parameters: [
-            new OA\Parameter(
-                name: "token",
-                in: "query",
-                required: true,
-                schema: new OA\Schema(type: "string")
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["token"],
+                properties: [
+                    new OA\Property(property: "token", type: "string")
+                ]
             )
-        ],
+        ),
         responses: [
             new OA\Response(response: 200, description: "Token válido"),
-            new OA\Response(response: 400, description: "Token inválido ou expirado")
+            new OA\Response(response: 400, description: "Token inválido ou expirado"),
+            new OA\Response(response: 422, description: "Erro de validação"),
+            new OA\Response(response: 429, description: "Muitas tentativas")
         ]
     )]
     public function validateToken(Request $request)

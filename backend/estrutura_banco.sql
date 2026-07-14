@@ -453,6 +453,37 @@ ALTER SEQUENCE gestoes.notificacoes_id_seq OWNED BY gestoes.notificacoes.id;
 
 
 --
+-- Name: password_resets; Type: TABLE; Schema: gestoes; Owner: -
+--
+
+CREATE TABLE gestoes.password_resets (
+    id bigint NOT NULL,
+    cpf character varying(11) NOT NULL,
+    token character varying(64) NOT NULL,
+    criado_em timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: password_resets_id_seq; Type: SEQUENCE; Schema: gestoes; Owner: -
+--
+
+CREATE SEQUENCE gestoes.password_resets_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: password_resets_id_seq; Type: SEQUENCE OWNED BY; Schema: gestoes; Owner: -
+--
+
+ALTER SEQUENCE gestoes.password_resets_id_seq OWNED BY gestoes.password_resets.id;
+
+
+--
 -- Name: permissoes; Type: TABLE; Schema: gestoes; Owner: -
 --
 
@@ -615,6 +646,13 @@ ALTER TABLE ONLY gestoes.notificacoes ALTER COLUMN id SET DEFAULT nextval('gesto
 
 
 --
+-- Name: password_resets id; Type: DEFAULT; Schema: gestoes; Owner: -
+--
+
+ALTER TABLE ONLY gestoes.password_resets ALTER COLUMN id SET DEFAULT nextval('gestoes.password_resets_id_seq'::regclass);
+
+
+--
 -- Name: permissoes id; Type: DEFAULT; Schema: gestoes; Owner: -
 --
 
@@ -765,6 +803,14 @@ ALTER TABLE ONLY gestoes.notificacoes
 
 
 --
+-- Name: password_resets password_resets_pkey; Type: CONSTRAINT; Schema: gestoes; Owner: -
+--
+
+ALTER TABLE ONLY gestoes.password_resets
+    ADD CONSTRAINT password_resets_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: permissoes permissoes_nome_key; Type: CONSTRAINT; Schema: gestoes; Owner: -
 --
 
@@ -881,6 +927,20 @@ CREATE INDEX idx_os_ativo ON core.ordem_servicos USING btree (ativo);
 --
 
 CREATE INDEX idx_os_fechado_em ON core.ordem_servicos USING btree (fechado_em);
+
+
+--
+-- Name: idx_password_resets_cpf; Type: INDEX; Schema: gestoes; Owner: -
+--
+
+CREATE INDEX idx_password_resets_cpf ON gestoes.password_resets USING btree (cpf);
+
+
+--
+-- Name: idx_password_resets_token; Type: INDEX; Schema: gestoes; Owner: -
+--
+
+CREATE INDEX idx_password_resets_token ON gestoes.password_resets USING btree (token);
 
 
 --

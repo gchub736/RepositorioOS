@@ -6,6 +6,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ConfiguracaoController;
 use App\Http\Controllers\NotificacaoController;
+use App\Http\Controllers\PasswordResetController;
 
 //rotas públicas
 
@@ -33,6 +34,12 @@ Route::get('/health', function () {
 
 Route::post('/usuarios', [UsuarioController::class, 'store']);
 Route::middleware('throttle:5,1')->post('/login', [UsuarioController::class, 'login']);
+
+// Recuperação de senha (públicas, com throttle por serem sensíveis).
+// Solicitar o envio é o mais sensível (dispara e-mail): limite mais baixo.
+Route::middleware('throttle:5,1')->post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
+Route::middleware('throttle:10,1')->post('/reset-password/validate', [PasswordResetController::class, 'validateToken']);
+Route::middleware('throttle:10,1')->post('/reset-password', [PasswordResetController::class, 'resetPassword']);
 
 
 //protegidos
