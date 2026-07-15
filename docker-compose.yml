@@ -47,6 +47,12 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend:/app
+    environment:
+      # O bind mount do Docker no Linux não propaga eventos inotify para dentro
+      # do container, então o watcher do Next não percebia rotas novas/alteradas
+      # (dava 404-fantasma até reiniciar). Polling faz o watcher varrer o disco.
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
     depends_on:
       - api
 
