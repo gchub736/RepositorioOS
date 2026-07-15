@@ -56,8 +56,11 @@ export const authBotaoClass =
   "w-full mt-2 py-3 rounded-lg bg-[#1e3a8a] hover:bg-[#162e6e] text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-[#1e3a8a]/20 transition-all disabled:opacity-70 disabled:cursor-not-allowed";
 
 // Card branco padrão que envolve os formulários.
+// No mobile o card cresce e quem rola é a página (senão o formulário fica preso
+// numa área minúscula e o botão de salvar quebra). No desktop ele preenche a
+// altura e rola por dentro, como antes.
 export const formCardClass =
-  "bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-300 dark:border-slate-800 p-5 md:p-6 flex-1 min-h-0 overflow-y-auto";
+  "bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-300 dark:border-slate-800 p-5 md:p-6 md:flex-1 md:min-h-0 md:overflow-y-auto";
 
 // Card de métrica (tela de estatísticas).
 export const statCardClass =

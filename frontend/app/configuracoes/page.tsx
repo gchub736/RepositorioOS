@@ -9,7 +9,9 @@ export default function Configuracoes() {
   const cfg = useConfiguracoes();
 
   return (
-    <div className="p-6 pb-0 max-w-full overflow-hidden h-full flex flex-col">
+    // Mobile: a página cresce e rola (o <main> do layout já tem overflow-y-auto).
+    // Desktop (md+): altura fixa e sem rolagem, com o card rolando por dentro.
+    <div className="p-6 pb-6 md:pb-0 max-w-full flex flex-col md:h-full md:overflow-hidden">
       <div className="flex items-center gap-1.5 mb-2 text-xs">
         <Home size={14} className="text-slate-400 dark:text-slate-500" />
         <span className="text-slate-400 dark:text-slate-500 font-medium">Início</span>

@@ -77,7 +77,7 @@ export default function FormPerfil({
         <div className="flex justify-end pt-2">
           <button
             type="submit"
-            className="px-8 py-2.5 bg-[#1e3a8a] hover:bg-[#162e6e] text-white font-bold rounded-lg text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#1e3a8a]/20"
+            className="w-full sm:w-auto px-8 py-3 sm:py-2.5 bg-[#1e3a8a] hover:bg-[#162e6e] text-white font-bold rounded-lg text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#1e3a8a]/20"
           >
             Salvar Perfil
           </button>
