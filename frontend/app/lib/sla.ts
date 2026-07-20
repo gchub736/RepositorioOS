@@ -20,8 +20,10 @@ export interface SlaCalculo {
   bgClass: string;
 }
 
-// Calcula os dados de exibição do painel de SLA. Retorna null quando não há SLA
-// aplicável (sem prazo, ou chamado fechado/cancelado).
+// Monta os dados de exibição do painel de SLA. NÃO faz conta de tempo: o "tempo
+// restante" e o "atrasado" vêm prontos do back-end (sla_tempo_restante / sla_atrasado).
+// Aqui só lemos esses valores e escolhemos a cor (apresentação). Retorna null quando
+// não há SLA aplicável (sem prazo, ou chamado fechado/cancelado).
 export const calcularSla = (os: Ordem | null): SlaCalculo | null => {
   if (!os || !os.sla_limite_data) return null;
 
@@ -29,23 +31,10 @@ export const calcularSla = (os: Ordem | null): SlaCalculo | null => {
   const statusNome = (os.status as any)?.nome || os.status;
   if (["Fechado", "Cancelado"].includes(statusNome)) return null;
 
+  // deadline é só a data do prazo (vinda do back) formatada para exibição.
   const deadline = new Date(os.sla_limite_data);
-  const now = new Date();
-
-  const diffMs = deadline.getTime() - now.getTime();
-  const diffMinTotal = Math.floor(diffMs / (1000 * 60));
-  const isOverdue = diffMinTotal < 0;
-
-  const absMin = Math.abs(diffMinTotal);
-  const horas = Math.floor(absMin / 60);
-  const minutos = absMin % 60;
-
-  let formattedTime = "";
-  if (horas > 0) {
-    formattedTime = `${horas}h e ${minutos}min`;
-  } else {
-    formattedTime = `${minutos}min`;
-  }
+  const isOverdue = !!os.sla_atrasado;
+  const formattedTime = os.sla_tempo_restante ?? "";
 
   let textClass = "text-green-600 dark:text-green-400";
   let bgClass = "bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800/30";

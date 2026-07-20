@@ -44,7 +44,9 @@ class OrdemServico extends Model
         'prioridade_nome', 
         'categoria_nome',
         'anexo_url',
-        'sla_limite_data'
+        'sla_limite_data',
+        'sla_tempo_restante',
+        'sla_atrasado',
     ];
 
     protected $casts = [
@@ -172,5 +174,44 @@ class OrdemServico extends Model
         }
 
         return $deadline->toIso8601String();
+    }
+
+    /**
+     * Indica se o prazo do SLA já estourou. Calculado no back para o front não
+     * precisar fazer conta de tempo. Null quando não há SLA aplicável ou está pausado.
+     */
+    public function getSlaAtrasadoAttribute()
+    {
+        $statusSla = $this->status_sla;
+        if ($statusSla === null || $statusSla === 'pausado') return null;
+
+        $limiteData = $this->sla_limite_data;
+        if (!$limiteData) return null;
+
+        $deadline = \Carbon\Carbon::parse($limiteData);
+        // Diferença em segundos: negativo = prazo já passou.
+        return ($deadline->getTimestamp() - now()->getTimestamp()) < 0;
+    }
+
+    /**
+     * Texto pronto do tempo restante (ou de atraso) do SLA, ex.: "2h e 30min".
+     * O front apenas exibe. Null quando não há SLA aplicável ou está pausado.
+     */
+    public function getSlaTempoRestanteAttribute()
+    {
+        $statusSla = $this->status_sla;
+        if ($statusSla === null || $statusSla === 'pausado') return null;
+
+        $limiteData = $this->sla_limite_data;
+        if (!$limiteData) return null;
+
+        $deadline = \Carbon\Carbon::parse($limiteData);
+        $diffSegundos = $deadline->getTimestamp() - now()->getTimestamp();
+        $totalMin = (int) floor($diffSegundos / 60);
+        $absMin = abs($totalMin);
+        $horas = intdiv($absMin, 60);
+        $minutos = $absMin % 60;
+
+        return $horas > 0 ? "{$horas}h e {$minutos}min" : "{$minutos}min";
     }
 }

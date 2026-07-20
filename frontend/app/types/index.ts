@@ -60,6 +60,9 @@ export interface Ordem {
   created_at?: string;
   sla_limite_data?: string;
   status_sla?: SlaStatus;
+  // Calculados no back-end (o front não faz conta de tempo, só exibe).
+  sla_tempo_restante?: string | null;
+  sla_atrasado?: boolean | null;
   comentarios?: Comentario[];
   historicos?: Historico[];
   [key: string]: any;
