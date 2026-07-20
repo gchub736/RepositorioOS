@@ -1,47 +1,50 @@
-Sistema de Gerenciamento de Ordens de Serviço
-Plataforma integrada para gestão de chamados técnicos, composta por uma API REST em Laravel e interface em Next.js. Toda a infraestrutura é operada via Docker.
-
-Arquitetura do Sistema
-Três serviços principais:
-
-API (Backend): Laravel 11
-Frontend: Next.js 15
-Banco de Dados: PostgreSQL 15
-Configuração Inicial
-1. Banco de Dados
-Copie o arquivo de exemplo e configure suas credenciais de admin:
-
-cp init-db/estrutura.example.sql init-db/estrutura.sql
-Edite o init-db/estrutura.sql e descomente o bloco INSERT no final, preenchendo com seus dados.
-
-Para gerar o hash da senha, após subir os containers rode:
-
-docker exec os_api php -r "echo password_hash('sua_senha', PASSWORD_BCRYPT, ['cost' => 12]);"
-2. Subindo os containers
-docker compose up --build
-Para recriar o banco do zero (apaga todos os dados):
-
-docker compose down -v && docker compose up --build
-Acesso aos Serviços
-Serviço	URL
-Frontend	http://localhost:3000
-Backend API	http://localhost:8000
-Swagger (Docs)	http://localhost:8000/api/documentation
-Banco de Dados	localhost:5432
-Controle de Acesso
-Cargo	Permissões
-Usuario	Criar chamados
-Tecnico	Criar e visualizar chamados atribuídos a ele
-Admin	Acesso total ao sistema
-Persistência de Dados
-O projeto utiliza volumes nomeados no Docker para garantir que os dados do PostgreSQL sejam persistidos mesmo após o encerramento dos containers.
-
-
 # OS Manager — Sistema de Gerenciamento de Ordens de Serviço
 
-Plataforma integrada para gestão de chamados técnicos, com API REST em Laravel e interface em Next.js, totalmente containerizada via Docker. Inclui autenticação JWT, controle de acesso por cargo, fluxo completo de OS com cálculo de tempo de pausa e código de rastreio único por chamado.
+Plataforma integrada para gestão de chamados técnicos, com API REST em **Laravel** e interface em **Next.js**, totalmente containerizada via **Docker**. Inclui autenticação JWT, controle de acesso por cargo, fluxo completo de OS com cálculo de tempo de pausa, SLA e código de rastreio único por chamado.
 
-> **Status:** em desenvolvimento ativo. 
+> **Status:** em desenvolvimento ativo.
+
+---
+
+## Como rodar (do zero, em 1 comando)
+
+**Pré-requisito:** Docker e Docker Compose instalados.
+
+```bash
+git clone https://github.com/giovanecarvalho-dev/sistema-ordens-servico.git
+cd sistema-ordens-servico
+# Para revisar a branch em desenvolvimento:
+git checkout refactor_frontend
+
+docker compose up --build
+```
+
+Só isso. No primeiro `up`, de forma automática:
+
+- **O banco** sobe e carrega o schema + seeds (schemas `core`/`gestoes`, tabelas, metadata e um **admin padrão**) a partir de `backend/estrutura_banco.sql`. Isso acontece só quando o volume está vazio.
+- **O backend** cria o `.env` a partir do `.env.example` e gera `APP_KEY` e `JWT_SECRET` sozinho.
+- **O frontend** usa `http://localhost:8000/api` por padrão (não precisa de configuração).
+
+Quando os três serviços subirem, acesse **http://localhost:3000** e entre com o admin padrão:
+
+| Campo | Valor |
+| --- | --- |
+| **CPF** | `00000000000` |
+| **Senha** | `password` |
+
+> Para recriar o ambiente do zero (apaga todos os dados e recarrega o schema):
+> ```bash
+> docker compose down -v && docker compose up --build
+> ```
+
+### Acesso aos serviços
+
+| Serviço | URL |
+| --- | --- |
+| Frontend | http://localhost:3000 |
+| Backend API | http://localhost:8000 |
+| Swagger (Docs) | http://localhost:8000/api/documentation |
+| Banco de Dados | localhost:5432 |
 
 ---
 
@@ -54,8 +57,6 @@ Plataforma integrada para gestão de chamados técnicos, com API REST em Laravel
 **Criar Usuário**
 ![Criar Usuário](docs/screenshots/CriarUsuario.png)
 
----
-
 ### Sistema
 **Dashboard**
 ![Dashboard](docs/screenshots/Dashboard.png)
@@ -66,135 +67,99 @@ Plataforma integrada para gestão de chamados técnicos, com API REST em Laravel
 **Abertura de Chamado**
 ![Abrir Chamado](docs/screenshots/AbrirChamado.png)
 
----
-
 ### API (Swagger)
-**Swagger - Ordens**
+**Swagger — Ordens**
 ![Swagger Ordens](docs/screenshots/SwaggerDashboardOrdens.png)
 
-**Swagger - Usuários**
+**Swagger — Usuários**
 ![Swagger Usuários](docs/screenshots/SwaggerUsuarios.png)
+
+---
 
 ## Stack
 
 **Backend**
-- PHP 8.2 + Laravel 11
+- PHP 8.4 + Laravel
 - Autenticação JWT (`tymon/jwt-auth`)
-- PostgreSQL 15
+- PostgreSQL 15 (schemas `core` e `gestoes`)
 - Documentação OpenAPI/Swagger via attributes do PHP 8
 
 **Frontend**
-- Next.js 15 (App Router)
-- TypeScript
+- Next.js (App Router) + TypeScript
+- Tailwind CSS
+- Arquitetura em camadas: `types` → `services` → `lib` → `hooks` → `components` → `page`
 
 **Infraestrutura**
 - Docker + Docker Compose
-- Volumes nomeados para persistência
+- Volume nomeado para persistência do Postgres
+- Schema versionado em SQL (`backend/estrutura_banco.sql` + `backend/sql_updates/`) — **o projeto não usa migrations do Laravel**
 
 ---
 
-##  Arquitetura
+## Arquitetura
 
 Três serviços orquestrados via `docker-compose`:
 
-Next.js 15 - Frontend (Porta:3000)
-Laravel 11 - API REST (Porta:8000)
-PostgreSQL - Banco (Porta:5432)
+- **Next.js** — Frontend (porta 3000)
+- **Laravel** — API REST (porta 8000)
+- **PostgreSQL** — Banco (porta 5432)
 
 ### Decisões técnicas
 
 - **Autenticação JWT em vez de sessão**: API stateless, escalável horizontalmente e desacoplada do front. Cliente envia token no header `Authorization: Bearer`.
-- **Middleware customizado por cargo (`cargo:Tecnico,Admin`)**: autorização aplicada na camada de rota, antes do controller, evitando código de permissão espalhado.
-- **Identificação dupla das OS (ID numérico + UUID `codigo_rastreio`)**: ID interno para joins e queries; UUID público para rastreio por cliente sem expor estrutura sequencial do banco.
-- **Senhas com bcrypt cost 12**: acima do default do Laravel, reforço deliberado de segurança.
-- **Eager loading nos relacionamentos (`with([...])`)**: evita N+1 queries em listagens de OS com status, categoria, urgência, prioridade, usuário e técnico.
-- **Soft delete via flag `ativo`**: chamados removidos vão pra "lixeira" em vez de sumir, preservando histórico e auditoria.
+- **Front "burro" / backend dono da lógica**: cálculos e regras de negócio (SLA, estatísticas, permissões) ficam no backend; o front apenas exibe e reage. Ex.: o tempo restante de SLA vem pronto do model (`sla_tempo_restante`).
+- **Middleware customizado por cargo (`cargo:Tecnico,Admin`)**: autorização aplicada na camada de rota, antes do controller.
+- **Identificação dupla das OS (ID numérico + UUID `codigo_rastreio`)**: ID interno para joins; UUID público para rastreio sem expor a sequência do banco.
+- **Senhas com bcrypt**: hashing padrão do Laravel.
+- **Eager loading nos relacionamentos (`with([...])`)**: evita N+1 em listagens de OS.
 - **Schema PostgreSQL separado** (`core`, `gestoes`): organização por domínio dentro do mesmo banco.
 
 ---
-
-## Configuração inicial
-
-### 1. Pré-requisitos
-
-- Docker e Docker Compose instalados.
-
-### 2. Variáveis de ambiente
-
-```bash
-cp os-manager-api/.env.example os-manager-api/.env
-cp os-manager-front/.env.example os-manager-front/.env.local
-```
-### 3. Banco de dados
-```bash
-cp init-db/estrutura.example.sql init-db/estrutura.sql
-```
-### 4. Subindo os containers
-
-```bash
-docker compose up --build
-```
-### 5.Inicialização da aplicação 
-
-```bash
-docker exec os_api php artisan key:generate
-docker exec os_api php artisan jwt:secret
-docker exec os_api php artisan migrate
-```
-### 6. Hash da senha do Admin
-
-```bash
-docker exec os_api php -r "echo password_hash('sua_senha', PASSWORD_BCRYPT, ['cost' => 12]);"
-```
-### Reiniciar Ambiente do Zero
-```bash
-docker compose down -v && docker compose up --build
-```
-##  Acesso aos serviços
-
-| Serviço | URL |
-| --- | --- |
-| Frontend | http://localhost:3000 |
-| Backend API | http://localhost:8000 |
-| Swagger (Docs) | http://localhost:8000/api/documentation |
-| Banco de Dados | localhost:5432 |
 
 ## Controle de acesso
 
 | Cargo | Permissões |
 | --- | --- |
 | **Usuário** | Criar chamados próprios |
-| **Técnico** | Criar chamados; visualizar e atualizar apenas chamados atribuídos a ele |
+| **Técnico** | Criar chamados; visualizar e atualizar apenas os atribuídos a ele |
 | **Admin** | Acesso total: gerenciar usuários, todos os chamados, dashboard |
 
-Permissões aplicadas via middleware customizado nas rotas (`routes/api.php`).
+Permissões aplicadas via middleware customizado nas rotas (`backend/routes/api.php`).
+
+---
 
 ## Funcionalidades
 
-- Autenticação JWT com login, logout e endpoint de perfil
+- Autenticação JWT com login, logout, perfil e recuperação de senha por e-mail
 - Cadastro público restrito ao cargo "Usuário" (sem escalada de privilégio)
-- CRUD completo de Ordens de Serviço com filtros por status, categoria, urgência, prioridade, busca textual, ID e UUID
+- CRUD completo de Ordens de Serviço com filtros (status, categoria, urgência, prioridade, SLA, busca textual, ID e UUID)
 - Paginação nativa e ordenação por data de criação
-- Cálculo automático de tempo pausado em estados como "Pausado" e "Aguardando Peça"
-- Geração automática de código de rastreio (UUID) na criação da OS
-- Validação centralizada via Form Requests com regras nomeadas
+- Cálculo de SLA e de tempo pausado (estados "Pausado" / "Aguardando Peça") no backend
+- Comentários e histórico por chamado; exportação CSV
+- Dashboard de estatísticas acionável (drill-down)
+- Notificações por usuário
 - Documentação interativa via Swagger UI
-- Camada de Service para lógica de negócio
-- Health check em `/api/health` para monitoramento
+- Health check em `/api/health`
+
+---
 
 ## Estrutura do projeto
 
     .
-    ├── os-manager-api/          # API Laravel 11
+    ├── backend/                 # API Laravel
     │   ├── app/
     │   │   ├── Http/
     │   │   │   ├── Controllers/
-    │   │   │   ├── Middleware/  # CargoMiddleware (autorização por cargo)
-    │   │   │   └── Requests/    # Form Requests com validação
-    │   │   ├── Models/
-    │   │   └── Services/        # Lógica de negócio
-    │   └── routes/api.php
-    ├── os-manager-front/        # Frontend Next.js 15
-    ├── init-db/                 # Schema inicial PostgreSQL
+    │   │   │   ├── Middleware/   # autorização por cargo
+    │   │   │   └── Requests/     # validação (Form Requests)
+    │   │   └── Models/
+    │   ├── routes/api.php
+    │   ├── estrutura_banco.sql   # schema + seeds (fonte da verdade do banco)
+    │   ├── sql_updates/          # alterações incrementais de schema
+    │   └── entrypoint.sh         # setup automático (.env, chaves) no boot
+    ├── frontend/                # Next.js (App Router)
+    │   └── app/
+    │       ├── types/  services/  lib/  hooks/  components/   # camadas
+    │       └── <rota>/page.tsx
+    ├── docs/screenshots/
     └── docker-compose.yml
-

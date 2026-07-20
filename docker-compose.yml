@@ -11,6 +11,10 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      # Carrega o schema + seeds (schemas, tabelas, metadata e admin padrao) apenas
+      # quando o volume esta vazio (primeiro `up` de um clone limpo). Em ambientes
+      # que ja tem dados no volume, o Postgres ignora este script.
+      - ./backend/estrutura_banco.sql:/docker-entrypoint-initdb.d/01-estrutura.sql:ro
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -d os_manager_db" ]
       interval: 10s

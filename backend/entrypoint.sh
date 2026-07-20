@@ -15,6 +15,23 @@ if [ ! -d "vendor" ]; then
   composer install --no-interaction --optimize-autoloader
 fi
 
+# Setup automático para clones limpos (o .env é ignorado no git). Tudo é idempotente:
+# em ambientes que já estão configurados, nada é sobrescrito.
+if [ ! -f ".env" ]; then
+  echo "Criando .env a partir de .env.example..."
+  cp .env.example .env
+fi
+
+if ! grep -q "^APP_KEY=base64:" .env; then
+  echo "Gerando APP_KEY..."
+  php artisan key:generate --force
+fi
+
+if ! grep -qE "^JWT_SECRET=.+" .env; then
+  echo "Gerando JWT_SECRET..."
+  php artisan jwt:secret --force
+fi
+
 # Inicia o scheduler do Laravel em background (executa backup diário, limpeza, etc.)
 echo "Iniciando scheduler em background..."
 php artisan schedule:work >> /var/www/storage/logs/scheduler.log 2>&1 &
