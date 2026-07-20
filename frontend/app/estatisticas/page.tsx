@@ -6,7 +6,8 @@ import {
   CardTopTecnicos,
   CardSaudeSla,
   CardEficiencia,
-  CardPrioridadesCategorias,
+  CardPrioridades,
+  CardCategorias,
   ControlesEstatisticas,
   EstatisticasSkeleton,
 } from "../components/estatisticas";
@@ -61,10 +62,8 @@ export default function Estatisticas() {
           <CardTopTecnicos tecnicos={dados.top_tecnicos} />
           <CardSaudeSla sla={dados.sla} />
           <CardEficiencia geral={dados.geral} tempoMedio={dados.tempo_medio_resolucao} />
-          <CardPrioridadesCategorias
-            prioridades={dados.prioridades}
-            categorias={dados.categorias}
-          />
+          <CardPrioridades prioridades={dados.prioridades} />
+          <CardCategorias categorias={dados.categorias} />
         </div>
       )}
     </div>

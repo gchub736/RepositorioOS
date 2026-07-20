@@ -12,12 +12,12 @@ export default function GraficoCategorias({ categorias }: { categorias: Estatist
   }));
 
   return (
-    <div className="flex flex-col h-full w-full min-h-0 mt-2 lg:mt-0">
+    <div className="flex flex-col h-full w-full min-h-0">
       <h3 className={statTituloClass}>Chamados por Categoria</h3>
-      {/* Altura flexível: o gráfico ocupa o espaço que sobra, evitando estourar a tela.
-          A cor do texto dos eixos vem de currentColor, então acompanha o tema
-          (o Recharts não entende as classes dark: do Tailwind). */}
-      <div className="flex-1 min-h-[120px] w-full text-slate-700 dark:text-slate-400">
+      {/* Mobile: altura fixa confortável (200px). Desktop: ocupa o espaço que sobra
+          no card, evitando estourar a tela. A cor do texto dos eixos vem de
+          currentColor, então acompanha o tema (o Recharts não entende dark:). */}
+      <div className="h-[200px] md:h-auto md:flex-1 md:min-h-[120px] w-full text-slate-700 dark:text-slate-400">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={dados} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <XAxis
