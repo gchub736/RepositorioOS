@@ -11,6 +11,7 @@ export default function Sidebar() {
   const [theme, setTheme] = useState('light');
   const [nomeSistema, setNomeSistema] = useState('Central de Suporte Técnico');
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [notificacoes, setNotificacoes] = useState<any[]>([]);
   const [showNotificacoes, setShowNotificacoes] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -106,6 +107,7 @@ export default function Sidebar() {
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 1023px)');
     const aplicar = () => {
+      setIsMobile(mq.matches);
       if (mq.matches) {
         setIsCollapsed(true);
       } else {
@@ -169,8 +171,16 @@ export default function Sidebar() {
   const toggleSidebar = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
-    localStorage.setItem('sidebarCollapsed', String(newState));
+    // No mobile o expandir/recolher é efêmero (drawer); não persiste para não
+    // sobrescrever a preferência de layout do desktop.
+    if (!isMobile) localStorage.setItem('sidebarCollapsed', String(newState));
   };
+
+  // No mobile, fecha o drawer sempre que a rota muda (clique num item ou
+  // redirecionamento por cargo), voltando ao trilho de ícones.
+  useEffect(() => {
+    if (isMobile) setIsCollapsed(true);
+  }, [pathname, isMobile]);
 
   const marcarTodasComoLidas = async () => {
     try {
@@ -204,6 +214,10 @@ export default function Sidebar() {
 
   const unreadCount = notificacoes.filter((n: any) => !n.lida).length;
 
+  // No mobile, a barra expandida vira um drawer sobreposto (flutua sobre o
+  // conteúdo com um scrim atrás) em vez de empurrar/quebrar o layout.
+  const mobileExpanded = isMobile && !isCollapsed;
+
   // ============================================================
   //  DESIGN INSTITUCIONAL - SIDEBAR POR CAMADAS
   // ============================================================
@@ -222,9 +236,21 @@ export default function Sidebar() {
     // Sem `overflow-hidden` na aside: o popover de notificações é filho dela e fica
     // posicionado fora dos seus limites (left-full), então seria recortado. Quem
     // arredonda os cantos são as camadas internas.
-    <aside
-      className={`${isCollapsed ? 'w-14' : 'w-[220px]'} transition-all duration-300 flex-shrink-0 flex flex-col h-full relative z-20 rounded-2xl`}
-    >
+    <>
+      {/* Scrim do drawer mobile: escurece o conteúdo e fecha ao tocar fora. */}
+      {mobileExpanded && (
+        <div
+          onClick={() => setIsCollapsed(true)}
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 lg:hidden animate-in fade-in duration-200"
+        />
+      )}
+      <aside
+        className={`flex flex-col h-full transition-all duration-300 ${
+          mobileExpanded
+            ? 'fixed inset-y-0 left-0 z-50 w-[240px] shadow-2xl rounded-r-2xl animate-in slide-in-from-left duration-300'
+            : `relative z-20 flex-shrink-0 rounded-2xl ${isCollapsed ? 'w-14' : 'w-[220px]'}`
+        }`}
+      >
       {/* ===== CAMADA BASE (z-0): Gradiente Navy Escuro ===== */}
       <div
         className="absolute inset-0 z-0 rounded-2xl"
@@ -445,5 +471,6 @@ export default function Sidebar() {
         </div>
       </div>
     </aside>
+    </>
   );
 }
