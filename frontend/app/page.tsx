@@ -16,9 +16,9 @@ import {
   ChamadosTabelaUsuario,
 } from "./components/chamados";
 import { ModalChamado } from "./components/modal";
-import PaginacaoBar from "./components/PaginacaoBar";
-import AnexoPreviewModal from "./components/AnexoPreviewModal";
-import ModoNavegacaoBanner from "./components/ModoNavegacaoBanner";
+import PaginacaoBar from "./components/comum/PaginacaoBar";
+import AnexoPreviewModal from "./components/chamados/AnexoPreviewModal";
+import ModoNavegacaoBanner from "./components/chamados/ModoNavegacaoBanner";
 import { AnexoPreview, Ordem } from "./types";
 
 // Orquestrador da tela de listagem de chamados: conecta os hooks de dados/estado aos

@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { ClipboardList, UserPlus, Users, BarChart3, Settings, LogOut, Sun, Moon, ChevronLeft, Menu, Bell, CheckCheck } from 'lucide-react';
-import api from '../services/api';
+import api from '../../services/api';
 
 export default function Sidebar() {
   const [cargo, setCargo] = useState('');

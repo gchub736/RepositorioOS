@@ -1,7 +1,7 @@
 "use client";
 import { useUsuarios } from "../hooks";
 import { UsuariosHeader, UsuariosFiltros, UsuariosTabela } from "../components/usuarios";
-import PaginacaoBar from "../components/PaginacaoBar";
+import PaginacaoBar from "../components/comum/PaginacaoBar";
 
 // Orquestrador da tela de usuários: conecta o hook de dados/estado (useUsuarios) aos
 // componentes de apresentação. Mesma arquitetura em camadas da tela de chamados.

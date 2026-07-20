@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { formInputClass } from "../lib/constantes";
+import { formInputClass } from "../../lib/constantes";
 
 interface Props {
   value: string;

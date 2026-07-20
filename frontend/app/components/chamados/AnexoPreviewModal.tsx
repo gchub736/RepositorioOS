@@ -1,8 +1,8 @@
 "use client";
-import { baixarAnexo } from "../services/ordensService";
-import { baixarBlob } from "../lib/csv";
-import { isUrlSegura } from "../lib/seguranca";
-import { AnexoPreview } from "../types";
+import { baixarAnexo } from "../../services/ordensService";
+import { baixarBlob } from "../../lib/csv";
+import { isUrlSegura } from "../../lib/seguranca";
+import { AnexoPreview } from "../../types";
 
 interface Props {
   anexoPreview: AnexoPreview;

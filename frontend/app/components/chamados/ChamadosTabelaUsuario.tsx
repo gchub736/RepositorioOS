@@ -1,6 +1,6 @@
 "use client";
-import Badge from "../Badge";
-import IconeAnexo from "../IconeAnexo";
+import Badge from "../comum/Badge";
+import IconeAnexo from "../comum/IconeAnexo";
 import { categoriaCor, statusCor, badgeCorPadrao } from "../../lib/constantes";
 import { AnexoPreview, Ordem } from "../../types";
 

@@ -1,7 +1,7 @@
 "use client";
 import { type FormEvent } from "react";
 import AlertaSucesso from "./AlertaSucesso";
-import InputSenha from "../InputSenha";
+import InputSenha from "../comum/InputSenha";
 import {
   formInputClass as inputClass,
   formLabelClass as labelClass,

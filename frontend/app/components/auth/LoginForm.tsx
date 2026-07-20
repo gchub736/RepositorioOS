@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { type FormEvent } from "react";
-import InputSenha from "../InputSenha";
+import InputSenha from "../comum/InputSenha";
 import AlertaAuth from "./AlertaAuth";
 import { authInputClass, authLabelClass, authBotaoClass } from "../../lib/constantes";
 import { mascararCpf } from "../../lib/formatters";

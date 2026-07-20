@@ -1,7 +1,7 @@
 "use client";
 import { Pin, SquarePen, Trash2 } from "lucide-react";
-import Badge from "../Badge";
-import IconeAnexo from "../IconeAnexo";
+import Badge from "../comum/Badge";
+import IconeAnexo from "../comum/IconeAnexo";
 import { urgenciaCor, categoriaCor, slaLabel, badgeCorPadrao } from "../../lib/constantes";
 import { statusSla } from "../../lib/sla";
 import { AnexoPreview, Ordem } from "../../types";
