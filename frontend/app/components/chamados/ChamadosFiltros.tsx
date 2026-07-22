@@ -22,12 +22,12 @@ export default function ChamadosFiltros({
   urgenciasList,
 }: Props) {
   return (
-    <div className="flex gap-3 mb-6 flex-wrap bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-300 dark:border-slate-800 shadow-sm">
+    <div className="flex flex-col sm:flex-row gap-3 mb-6 sm:flex-wrap bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-300 dark:border-slate-800 shadow-sm">
       {cargo !== "Usuario" && (
         <select
           value={filtros.status}
           onChange={(e) => setFiltros({ ...filtros, status: e.target.value, page: 1 })}
-          className={filterClass}
+          className={`${filterClass} w-full sm:w-auto`}
         >
           <option value="">Todos os status</option>
           {statusList.map((s) => (
@@ -41,7 +41,7 @@ export default function ChamadosFiltros({
         <select
           value={filtros.sla}
           onChange={(e) => setFiltros({ ...filtros, sla: e.target.value, page: 1 })}
-          className={filterClass}
+          className={`${filterClass} w-full sm:w-auto`}
         >
           <option value="">Todos os SLAs</option>
           <option value="ok">No Prazo</option>
@@ -53,7 +53,7 @@ export default function ChamadosFiltros({
       <select
         value={filtros.categoria}
         onChange={(e) => setFiltros({ ...filtros, categoria: e.target.value, page: 1 })}
-        className={filterClass}
+        className={`${filterClass} w-full sm:w-auto`}
       >
         <option value="">Todas as categorias</option>
         {categorias.map((c) => (
@@ -67,7 +67,7 @@ export default function ChamadosFiltros({
           <select
             value={filtros.urgencia}
             onChange={(e) => setFiltros({ ...filtros, urgencia: e.target.value, page: 1 })}
-            className={filterClass}
+            className={`${filterClass} w-full sm:w-auto`}
           >
             <option value="">Todas as urgências</option>
             {urgenciasList.map((u) => (
@@ -81,7 +81,7 @@ export default function ChamadosFiltros({
       <select
         value={filtros.per_page}
         onChange={(e) => setFiltros({ ...filtros, per_page: Number(e.target.value), page: 1 })}
-        className={filterClass}
+        className={`${filterClass} w-full sm:w-auto`}
       >
         <option value={15}>15 por página</option>
         <option value={30}>30 por página</option>
@@ -94,7 +94,7 @@ export default function ChamadosFiltros({
         <button
           onClick={() => setFiltros({ ...filtros, sem_tecnico: false, page: 1 })}
           title="Remover filtro"
-          className="flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-bold bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 hover:bg-orange-200 dark:hover:bg-orange-900/50 transition-colors"
+          className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-bold bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 hover:bg-orange-200 dark:hover:bg-orange-900/50 transition-colors w-full sm:w-auto"
         >
           Pendentes de atribuição
           <X size={13} />
@@ -117,7 +117,7 @@ export default function ChamadosFiltros({
               per_page: 15,
             })
           }
-          className="text-xs font-bold text-red-400 hover:text-red-600 px-3"
+          className="text-xs font-bold text-red-400 hover:text-red-600 px-3 py-2.5 sm:py-0 w-full sm:w-auto"
         >
           Limpar filtros
         </button>

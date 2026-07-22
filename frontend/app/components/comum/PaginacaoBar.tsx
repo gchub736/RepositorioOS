@@ -24,7 +24,7 @@ export default function PaginacaoBar({
 
   return (
     <div className="flex justify-between items-center bg-white dark:bg-slate-900 px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-800 shadow-sm mt-4 flex-shrink-0">
-      <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest hidden md:block">
+      <div className="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest hidden md:block">
         Página {page} de {lastPage} • {total} {total === 1 ? labelSingular : labelPlural}
       </div>
       <div className="flex items-between justify-center w-full md:w-auto">

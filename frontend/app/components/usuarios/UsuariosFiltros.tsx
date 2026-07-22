@@ -20,7 +20,7 @@ export default function UsuariosFiltros({
   setPaginaAtual,
 }: Props) {
   return (
-    <div className="flex gap-3 mb-6 flex-wrap bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-300 dark:border-slate-800 shadow-sm">
+    <div className="flex flex-col sm:flex-row gap-3 mb-6 sm:flex-wrap bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-300 dark:border-slate-800 shadow-sm">
       <input
         type="number"
         placeholder="Filtrar por ID"
@@ -29,7 +29,7 @@ export default function UsuariosFiltros({
         onKeyDown={(e) => {
           if (e.key === "Enter") onBuscar();
         }}
-        className={`${filterClass} w-40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+        className={`${filterClass} w-full sm:w-40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
       />
       <select
         value={itensPorPagina}
@@ -37,7 +37,7 @@ export default function UsuariosFiltros({
           setItensPorPagina(Number(e.target.value));
           setPaginaAtual(1);
         }}
-        className={filterClass}
+        className={`${filterClass} w-full sm:w-auto`}
       >
         <option value={5}>5 por página</option>
         <option value={10}>10 por página</option>

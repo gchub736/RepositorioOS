@@ -40,7 +40,32 @@ export default function Paginacao({ currentPage, lastPage, onPageChange }: Pagin
   }
 
   return (
-    <div className="flex gap-1.5 items-center">
+    <>
+    {/* ===== MOBILE (< sm): compacto, nunca estoura ===== */}
+    <div className="flex sm:hidden gap-2 items-center">
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className={buttonClass(false)}
+        title="Página Anterior"
+      >
+        <ChevronLeft size={14} />
+      </button>
+      <span className="px-2 text-xs font-bold text-slate-600 dark:text-slate-300 whitespace-nowrap">
+        {currentPage} / {lastPage}
+      </span>
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === lastPage}
+        className={buttonClass(false)}
+        title="Próxima Página"
+      >
+        <ChevronRight size={14} />
+      </button>
+    </div>
+
+    {/* ===== DESKTOP (sm+): completa ===== */}
+    <div className="hidden sm:flex gap-1.5 items-center">
       {/* Ir para a Primeira Página */}
       <button
         onClick={() => onPageChange(1)}
@@ -101,6 +126,7 @@ export default function Paginacao({ currentPage, lastPage, onPageChange }: Pagin
         <ChevronsRight size={14} />
       </button>
     </div>
+    </>
   );
 }
 

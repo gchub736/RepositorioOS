@@ -81,7 +81,7 @@ export default function ListaChamados() {
 
   return (
     <>
-      <div className="p-6 pb-0 max-w-full overflow-hidden h-full flex flex-col">
+      <div className="p-6 pb-6 md:pb-0 max-w-full flex flex-col md:h-full md:overflow-hidden">
         <ChamadosHeader
           busca={filtros.busca}
           onBuscaChange={(valor) => setFiltros({ ...filtros, busca: valor, page: 1 })}
