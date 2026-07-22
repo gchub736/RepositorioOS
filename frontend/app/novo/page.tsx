@@ -27,7 +27,7 @@ export default function NovoChamado() {
   } = useNovoChamado();
 
   return (
-    <div className="p-6 pb-0 max-w-full overflow-hidden h-full flex flex-col">
+    <div className="p-6 pb-6 md:pb-0 max-w-full flex flex-col md:h-full md:overflow-hidden">
       <div className="flex items-center gap-1.5 mb-2 text-xs">
         <Home size={14} className="text-slate-400 dark:text-slate-500" />
         <span className="text-slate-400 dark:text-slate-500 font-medium">Início</span>

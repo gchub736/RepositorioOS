@@ -63,8 +63,8 @@ export default function NovoChamadoForm({
   onCancelar,
 }: Props) {
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-300 dark:border-slate-800 p-5 md:p-6 flex-1 min-h-0 flex flex-col">
-      <form onSubmit={onSubmit} className="flex flex-col flex-1 min-h-0">
+    <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-300 dark:border-slate-800 p-5 md:p-6 md:flex-1 md:min-h-0 flex flex-col">
+      <form onSubmit={onSubmit} className="flex flex-col md:flex-1 md:min-h-0">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div className="space-y-1.5">
             <div className="flex justify-between items-center">
@@ -108,13 +108,13 @@ export default function NovoChamadoForm({
           />
         </div>
 
-        <div className="space-y-1.5 mb-4 flex-1 min-h-0 flex flex-col">
+        <div className="space-y-1.5 mb-4 md:flex-1 md:min-h-0 flex flex-col">
           <div className="flex justify-between items-center">
             <label className={labelClass}>Descrição <Obrigatorio /></label>
             <Contador atual={descricao.length} limite={LIMITE_DESCRICAO} />
           </div>
           <textarea
-            className={`${inputClass} flex-1 min-h-[100px] resize-none`}
+            className={`${inputClass} md:flex-1 min-h-[100px] resize-none`}
             placeholder="Descreva detalhadamente o problema..."
             value={descricao}
             maxLength={LIMITE_DESCRICAO}
@@ -141,18 +141,18 @@ export default function NovoChamadoForm({
           <p className="text-[10px] text-slate-500 dark:text-slate-400">Formatos aceitos: PDF, JPG, PNG (Max: 5MB)</p>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-slate-300 dark:border-slate-800">
+        <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t border-slate-300 dark:border-slate-800">
           <button
             type="button"
             onClick={onCancelar}
-            className="px-6 py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-lg text-xs uppercase tracking-wider transition-all shadow-sm"
+            className="px-6 py-3 sm:py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-lg text-xs uppercase tracking-wider transition-all shadow-sm"
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`px-8 py-2.5 bg-[#1e3a8a] hover:bg-[#162e6e] text-white font-bold rounded-lg text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#1e3a8a]/20 ${
+            className={`px-8 py-3 sm:py-2.5 bg-[#1e3a8a] hover:bg-[#162e6e] text-white font-bold rounded-lg text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#1e3a8a]/20 ${
               isSubmitting ? "opacity-70 cursor-not-allowed" : ""
             }`}
           >
