@@ -30,10 +30,10 @@ export default function ModalChamado({
 
   return (
     <div
-      className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50"
+      className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-start md:items-center justify-center z-50 p-3 sm:p-4 md:p-6 overflow-y-auto"
       onClick={modal.fecharModal}
     >
-      <div className="relative w-full max-w-4xl">
+      <div className="relative w-full max-w-4xl my-auto">
         <div
           className="bg-white dark:bg-slate-900 rounded-2xl border-b border-slate-300 dark:border-slate-800 shadow-2xl overflow-hidden max-h-[95vh]"
           onClick={(e) => e.stopPropagation()}

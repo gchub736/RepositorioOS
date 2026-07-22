@@ -127,12 +127,13 @@ export default function FormEdicaoChamado({
           <p className="text-xs text-slate-400 dark:text-slate-500 italic mt-1.5">Sem anexo</p>
         )}
       </div>
-      <div className="flex justify-end gap-3 mt-4">
+      {/* Botões: full-width e empilhados no mobile; alinhados à direita no desktop. */}
+      <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-4">
         {cargo === "Usuario" ? (
           <button
             type="button"
             onClick={onCancelar}
-            className="bg-slate-500 hover:bg-slate-600 text-white px-6 py-2.5 rounded-xl font-bold text-xs tracking-wider uppercase transition-all shadow-sm"
+            className="bg-slate-500 hover:bg-slate-600 text-white px-6 py-3 sm:py-2.5 rounded-xl font-bold text-xs tracking-wider uppercase transition-all shadow-sm"
           >
             FECHAR
           </button>
@@ -141,13 +142,13 @@ export default function FormEdicaoChamado({
             <button
               type="button"
               onClick={onCancelar}
-              className="bg-slate-500 hover:bg-slate-600 text-white px-6 py-2.5 rounded-xl font-bold text-xs tracking-wider uppercase transition-all shadow-sm"
+              className="flex-1 sm:flex-none bg-slate-500 hover:bg-slate-600 text-white px-6 py-3 sm:py-2.5 rounded-xl font-bold text-xs tracking-wider uppercase transition-all shadow-sm"
             >
               CANCELAR
             </button>
             <button
               type="submit"
-              className="bg-blue-900 hover:bg-blue-800 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-blue-900/20 text-xs tracking-wider uppercase transition-all"
+              className="flex-1 sm:flex-none bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 sm:py-2.5 rounded-xl font-bold shadow-lg shadow-blue-900/20 text-xs tracking-wider uppercase transition-all"
             >
               SALVAR
             </button>
