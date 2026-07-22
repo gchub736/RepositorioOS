@@ -57,7 +57,7 @@ export default function FormPerfil({
         </div>
 
         <div className="border-t border-slate-300 dark:border-slate-800 pt-4">
-          <p className={`${formSecaoClass} mb-3`}>Alterar Senha (opcional)</p>
+          <p className={`${formSecaoClass} mb-3`}>Alterar Senha</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className={labelClass}>Senha Atual</label>
@@ -77,7 +77,7 @@ export default function FormPerfil({
         <div className="flex justify-end pt-2">
           <button
             type="submit"
-            className="w-full sm:w-auto px-8 py-3 sm:py-2.5 bg-[#1e3a8a] hover:bg-[#162e6e] text-white font-bold rounded-lg text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#1e3a8a]/20"
+            className="w-full sm:w-auto px-4 sm:px-8 py-3 sm:py-2.5 bg-[#1e3a8a] hover:bg-[#162e6e] text-white font-bold rounded-lg text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#1e3a8a]/20 text-center"
           >
             Salvar Perfil
           </button>
