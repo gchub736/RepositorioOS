@@ -51,6 +51,14 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend:/app
+      # node_modules e .next ficam em volumes nomeados (filesystem nativo do
+      # container), não no bind mount. Resolução de módulos e cache do Turbopack
+      # fazem I/O intenso; atravessar o bind mount deixava cada compilação de
+      # rota nova (10-20s+) e travava a tela ao trocar de página. Isso também
+      # "esconde" o node_modules do host, então installs de pacote precisam
+      # rodar dentro do container (`docker compose exec front npm install ...`).
+      - front_node_modules:/app/node_modules
+      - front_next_cache:/app/.next
     environment:
       # O bind mount do Docker no Linux não propaga eventos inotify para dentro
       # do container, então o watcher do Next não percebia rotas novas/alteradas
@@ -62,3 +70,5 @@ services:
 
 volumes:
   postgres_data:
+  front_node_modules:
+  front_next_cache:
