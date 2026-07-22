@@ -20,7 +20,7 @@ export default function CardEficiencia({ geral, tempoMedio }: Props) {
     <div className={statCardClass}>
       <h3 className={statTituloClass}>Taxa de Eficiência</h3>
 
-      <div className="flex items-center gap-5 flex-1">
+      <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5 flex-1 text-center sm:text-left">
         <div className="relative flex-shrink-0">
           <svg width="88" height="88" viewBox="0 0 88 88" className="-rotate-90">
             <circle

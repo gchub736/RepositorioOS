@@ -1,5 +1,5 @@
 "use client";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 import { statTituloClass } from "../../lib/constantes";
 import { EstatisticaCategoria } from "../../types";
 
@@ -17,21 +17,37 @@ export default function GraficoCategorias({ categorias }: { categorias: Estatist
       {/* Mobile: altura fixa confortável (200px). Desktop: ocupa o espaço que sobra
           no card, evitando estourar a tela. A cor do texto dos eixos vem de
           currentColor, então acompanha o tema (o Recharts não entende dark:). */}
-      <div className="h-[200px] md:h-auto md:flex-1 md:min-h-[120px] w-full text-slate-700 dark:text-slate-400">
+      {/* Legenda própria (HTML), sempre alinhada — evita o desalinho da legenda do Recharts. */}
+      <div className="flex items-center justify-center gap-4 mt-1 mb-2">
+        <span className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-600 dark:text-slate-300">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#3b82f6]" /> Em Aberto
+        </span>
+        <span className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-600 dark:text-slate-300">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#10b981]" /> Resolvidos
+        </span>
+      </div>
+      <div className="h-[220px] md:h-auto md:flex-1 md:min-h-[140px] w-full text-slate-500 dark:text-slate-400">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={dados} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <BarChart data={dados} margin={{ top: 4, right: 8, left: 0, bottom: 0 }} barGap={2} barCategoryGap="25%">
             <XAxis
               dataKey="name"
-              tick={{ fill: "currentColor", fontSize: 11 }}
+              tick={{ fill: "currentColor", fontSize: 9 }}
               tickLine={false}
               axisLine={false}
+              interval={0}
+              height={28}
+              tickMargin={6}
+              tickFormatter={(v: string) => (v.length > 6 ? `${v.slice(0, 5)}…` : v)}
             />
             <YAxis
-              tick={{ fill: "currentColor", fontSize: 11 }}
+              tick={{ fill: "currentColor", fontSize: 10 }}
               tickLine={false}
               axisLine={false}
+              allowDecimals={false}
+              width={22}
             />
             <Tooltip
+              cursor={{ fill: "rgba(148, 163, 184, 0.12)" }}
               contentStyle={{
                 backgroundColor: "rgba(15, 23, 42, 0.95)",
                 border: "1px solid rgba(51, 65, 85, 0.5)",
@@ -41,9 +57,8 @@ export default function GraficoCategorias({ categorias }: { categorias: Estatist
               }}
               itemStyle={{ color: "#f8fafc" }}
             />
-            <Legend verticalAlign="top" height={32} iconType="circle" iconSize={6} wrapperStyle={{ fontSize: "10px" }} />
-            <Bar dataKey="Em Aberto" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Em Aberto" />
-            <Bar dataKey="Resolvidos" fill="#10b981" radius={[4, 4, 0, 0]} name="Resolvidos" />
+            <Bar dataKey="Em Aberto" fill="#3b82f6" radius={[3, 3, 0, 0]} name="Em Aberto" maxBarSize={38} />
+            <Bar dataKey="Resolvidos" fill="#10b981" radius={[3, 3, 0, 0]} name="Resolvidos" maxBarSize={38} />
           </BarChart>
         </ResponsiveContainer>
       </div>
